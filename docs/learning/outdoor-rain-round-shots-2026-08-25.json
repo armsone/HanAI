@@ -1,0 +1,91 @@
+{
+  "schemaVersion": 1,
+  "studyDate": "2026-08-25",
+  "feature": "golf-shot-detection",
+  "labelStatus": "human-confirmed-rainy-round-context-and-visual-positive-audit",
+  "identity": {
+    "assetHashes": "removed",
+    "fileNames": "removed",
+    "captureTimes": "removed",
+    "sourcePaths": "not-recorded",
+    "framesStored": false,
+    "audioStored": false,
+    "jointCoordinatesStored": false
+  },
+  "sessionTruth": {
+    "environment": "outdoor-golf-course-in-and-after-rain",
+    "clipCount": 12,
+    "visuallyAuditedGolfShotCount": 12,
+    "puttPositiveCount": 0,
+    "perClipClubLabelsAvailable": false,
+    "observedShotContexts": [
+      "short-approach-like-swing",
+      "fairway-or-rough-swing",
+      "teeing-ground-swing"
+    ]
+  },
+  "coverage": {
+    "totalDurationSeconds": 87.9201,
+    "sampleIntervalSeconds": 0.2,
+    "sampledFrameCount": 433,
+    "poseFrameCount": 289,
+    "allClipsAuditedAcrossFullDuration": true,
+    "eventCenteredFramesAuditedPerClip": 7
+  },
+  "aggregateRanges": {
+    "poseDetectionRate": { "min": 0.3659, "median": 0.7434, "max": 0.8929 },
+    "poseConfidenceMedian": { "min": 0.6513, "median": 0.7213, "max": 0.7822 },
+    "visualMotionMedian": { "min": 0.0045, "median": 0.0145, "max": 0.0604 },
+    "visualMotionMaximum": { "min": 0.0219, "median": 0.0812, "max": 0.2072 },
+    "handRangeInBodyWidths": { "min": 2.5879, "median": 4.4511, "max": 7.7062 },
+    "coreRangeInBodyWidths": { "min": 0.7119, "median": 2.8575, "max": 7.1534 },
+    "peakHandSpeedInBodyWidthsPerSecond": { "min": 5.5818, "median": 11.2219, "max": 16.4515 },
+    "audioScoreMedianByClip": { "min": 0.0062, "median": 0.0154, "max": 0.1033 },
+    "audioScoreMaximumByClip": { "min": 0.0920, "median": 0.4960, "max": 0.5289 },
+    "audioPeakMaximumByClip": { "min": 0.1419, "median": 0.9630, "max": 1.0 }
+  },
+  "anonymousClipSummaries": [
+    { "clipIndex": 1, "durationSeconds": 8.3613, "audioScoreMax": 0.4698, "audioPeakMax": 0.8961, "poseDetectionRate": 0.6341, "visualMotionMedian": 0.0084, "visualMotionMax": 0.0349 },
+    { "clipIndex": 2, "durationSeconds": 3.2840, "audioScoreMax": 0.5274, "audioPeakMax": 1.0, "poseDetectionRate": 0.7500, "visualMotionMedian": 0.0112, "visualMotionMax": 0.0219 },
+    { "clipIndex": 3, "durationSeconds": 5.6307, "audioScoreMax": 0.4320, "audioPeakMax": 0.7328, "poseDetectionRate": 0.8929, "visualMotionMedian": 0.0604, "visualMotionMax": 0.1235 },
+    { "clipIndex": 4, "durationSeconds": 3.9880, "audioScoreMax": 0.3159, "audioPeakMax": 0.6010, "poseDetectionRate": 0.7368, "visualMotionMedian": 0.0478, "visualMotionMax": 0.1372 },
+    { "clipIndex": 5, "durationSeconds": 8.7667, "audioScoreMax": 0.3979, "audioPeakMax": 0.7249, "poseDetectionRate": 0.8140, "visualMotionMedian": 0.0156, "visualMotionMax": 0.1041 },
+    { "clipIndex": 6, "durationSeconds": 8.2120, "audioScoreMax": 0.5079, "audioPeakMax": 0.9881, "poseDetectionRate": 0.3659, "visualMotionMedian": 0.0045, "visualMotionMax": 0.0289 },
+    { "clipIndex": 7, "durationSeconds": 7.9773, "audioScoreMax": 0.5256, "audioPeakMax": 1.0, "poseDetectionRate": 0.8718, "visualMotionMedian": 0.0321, "visualMotionMax": 0.1415 },
+    { "clipIndex": 8, "durationSeconds": 4.6707, "audioScoreMax": 0.5081, "audioPeakMax": 1.0, "poseDetectionRate": 0.4348, "visualMotionMedian": 0.0223, "visualMotionMax": 0.1061 },
+    { "clipIndex": 9, "durationSeconds": 9.8547, "audioScoreMax": 0.4841, "audioPeakMax": 0.9378, "poseDetectionRate": 0.7551, "visualMotionMedian": 0.0074, "visualMotionMax": 0.0582 },
+    { "clipIndex": 10, "durationSeconds": 9.1080, "audioScoreMax": 0.5289, "audioPeakMax": 1.0, "poseDetectionRate": 0.7556, "visualMotionMedian": 0.0268, "visualMotionMax": 0.2072 },
+    { "clipIndex": 11, "durationSeconds": 7.3160, "audioScoreMax": 0.0920, "audioPeakMax": 0.1419, "poseDetectionRate": 0.5833, "visualMotionMedian": 0.0134, "visualMotionMax": 0.0375 },
+    { "clipIndex": 12, "durationSeconds": 10.7507, "audioScoreMax": 0.5173, "audioPeakMax": 1.0, "poseDetectionRate": 0.4906, "visualMotionMedian": 0.0122, "visualMotionMax": 0.0490 }
+  ],
+  "criticalCases": [
+    {
+      "case": "single-frame-putt-lookalike-corrected-by-sequence",
+      "clipIndex": 1,
+      "lesson": "낮은 어드레스 한 장면은 퍼팅처럼 보였지만 큰 백스윙과 높은 피니시가 이어져 짧은 어프로치성 샷으로 정정했다. 클럽 판정은 한 프레임이 아니라 전체 동작 순서를 봐야 한다."
+    },
+    {
+      "case": "real-shot-with-weak-impact-under-high-background",
+      "clipIndex": 11,
+      "features": { "peak": 0.1419, "rms": 0.0313, "crossingRate": 0.1584, "impactScore": 0.0920, "crestFactor": 4.5350 },
+      "lesson": "우천·야외 배경에서는 실제 샷도 기존 noisy 기준의 오디오 단독 판정을 넘지 못할 수 있다. 오디오 문턱을 일괄 낮추지 말고 정렬된 연속 자세·화면 근거가 있을 때만 약한 날카로운 접촉음을 살린다."
+    },
+    {
+      "case": "impact-near-leading-boundary",
+      "clipIndices": [4, 11],
+      "lesson": "임팩트가 파일 시작 0.2~0.3초 부근이면 준비·백스윙 일부가 잘릴 수 있다. 실제 AiShot 적용 시에는 롤링 프리뷰와 pre-roll을 유지해야 한다."
+    }
+  ],
+  "modelUse": {
+    "modelVersion": "0.7.0",
+    "audioThresholdsChanged": false,
+    "addedBehavior": "visual-backed-weak-sharp-impact-with-continuous-shot-motion",
+    "negativeGate": "same-weak-audio-without-aligned-motion-or-pose-is-rejected"
+  },
+  "remainingLimits": [
+    "퍼팅 양성 자료는 이번 12개에도 없다.",
+    "정확한 클럽 종류는 사람이 클립별로 라벨하지 않았다.",
+    "우천 배경 소음 종류와 강도는 장소·기기에 따라 달라 추가 세션이 필요하다.",
+    "한 클립의 시작이 임팩트에 매우 가까워 전체 주소 시퀀스를 평가할 수 없다."
+  ]
+}

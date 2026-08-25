@@ -1,0 +1,69 @@
+{
+  "schemaVersion": 1,
+  "golfModelVersion": "0.7.0",
+  "kind": "swingPose",
+  "description": "GolfSwingPoseAnalyzer 상태기계 검증. 손 위치는 몸 크기로 정규화한 합성 수치다.",
+  "defaults": {
+    "handY": 0.0,
+    "coreX": 0.5,
+    "coreY": 0.5,
+    "bodyScale": 0.2,
+    "confidence": 0.9
+  },
+  "cases": [
+    {
+      "id": "full-swing-returns-through-address",
+      "description": "정지 주소 → 손 이동 0.5 → 빠른 복귀 2샘플이면 감지 시각 기준 [-0.45, +0.30] 임팩트 창이 열린다.",
+      "samples": [
+        { "time": 0.0, "handX": 0.0 },
+        { "time": 0.3, "handX": 0.0 },
+        { "time": 0.6, "handX": 0.0 },
+        { "time": 0.8, "handX": 0.25 },
+        { "time": 1.0, "handX": 0.5 },
+        { "time": 1.2, "handX": 0.35 },
+        { "time": 1.4, "handX": 0.15 }
+      ],
+      "expect": {
+        "phase": "impactWindow",
+        "minConfidence": 0.72,
+        "impactWindowStart": 0.95,
+        "impactWindowEnd": 1.7,
+        "isImpactWindowAt": [0.95, 1.4, 1.7],
+        "notImpactWindowAt": [0.94, 1.71]
+      }
+    },
+    {
+      "id": "low-confidence-samples-are-ignored",
+      "description": "자세 신뢰도가 0.45 미만이면 어떤 단계도 진행하지 않는다.",
+      "samples": [
+        { "time": 0.0, "handX": 0.0, "confidence": 0.3 },
+        { "time": 0.3, "handX": 0.0, "confidence": 0.3 },
+        { "time": 0.6, "handX": 0.0, "confidence": 0.3 },
+        { "time": 0.8, "handX": 0.25, "confidence": 0.3 },
+        { "time": 1.0, "handX": 0.5, "confidence": 0.3 },
+        { "time": 1.2, "handX": 0.35, "confidence": 0.3 },
+        { "time": 1.4, "handX": 0.15, "confidence": 0.3 }
+      ],
+      "expect": {
+        "phase": "seekingAddress",
+        "notImpactWindowAt": [1.4]
+      }
+    },
+    {
+      "id": "backswing-without-return-stays-backswing",
+      "description": "손이 계속 멀어지기만 하면 임팩트 창을 열지 않는다.",
+      "samples": [
+        { "time": 0.0, "handX": 0.0 },
+        { "time": 0.3, "handX": 0.0 },
+        { "time": 0.6, "handX": 0.0 },
+        { "time": 0.8, "handX": 0.25 },
+        { "time": 1.0, "handX": 0.5 },
+        { "time": 1.2, "handX": 0.55 }
+      ],
+      "expect": {
+        "phase": "backswing",
+        "notImpactWindowAt": [1.2]
+      }
+    }
+  ]
+}

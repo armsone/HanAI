@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 1,
+  "studyDate": "2026-08-24",
+  "feature": "AiShot",
+  "label": "iron-negative-for-putt",
+  "labelSource": "책임자가 아이언 샷이라고 직접 정정한 정답 라벨",
+  "isPuttPositive": false,
+  "usage": [
+    "soundless-putt-false-positive-prevention-0.6.0",
+    "swing-audio-visual-fusion-regression"
+  ],
+  "identity": {
+    "assetHash": "removed",
+    "fileName": "removed",
+    "captureTime": "removed",
+    "framesStored": false,
+    "audioStored": false
+  },
+  "media": {
+    "durationSeconds": 544,
+    "width": 1080,
+    "height": 1440,
+    "environment": "indoor-screen-golf",
+    "club": "iron"
+  },
+  "audioStudy": {
+    "averageScore": 1.07,
+    "peakScore": 1.376,
+    "topMomentCount": 12,
+    "topMomentRanges": {
+      "peak": [0.85, 0.96],
+      "rms": [0.023, 0.051],
+      "crossingRate": [0.023, 0.045],
+      "rise": [0.222, 0.325],
+      "afterglow": [0.313, 0.868],
+      "score": [1.07, 1.376]
+    }
+  },
+  "visualStudy": {
+    "sampledFrameCount": 24,
+    "averageMotion": 0.043,
+    "peakMotion": 0.108,
+    "averageBrightnessChange": 0.02,
+    "peakBrightnessChange": 0.085
+  },
+  "observedMotionPattern": [
+    "긴 어드레스",
+    "작은 왜글·예비 동작",
+    "빠른 백스윙·다운스윙",
+    "큰 몸통 회전과 피니시 반복"
+  ],
+  "lessons": [
+    "정지 화면의 낮은 어드레스 자세만으로 퍼팅을 추정하면 안 된다.",
+    "연속 동작의 크기·속도·몸통 회전·피니시를 함께 봐야 한다.",
+    "퍼팅 상한을 넘는 손 이동(>0.60), 빠른 주소 통과(>1.5/s), 큰 팔로스루, 큰 몸통 이동(>0.9/s)은 무음 퍼팅 판정을 초기화한다.",
+    "아이언은 기존 충격음+몸동작 결합 경로로만 판단한다."
+  ],
+  "fixtureCases": [
+    "Fixtures/golf/putt-stroke.json#iron-backswing-exceeds-putt-cap",
+    "Fixtures/golf/putt-stroke.json#iron-fast-return-through-address-resets",
+    "Fixtures/golf/putt-stroke.json#large-follow-through-resets",
+    "Fixtures/golf/putt-stroke.json#large-core-motion-resets-any-phase"
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 1,
+  "studyDate": "2026-08-24",
+  "feature": "AiShot",
+  "label": "full-swing-positive",
+  "usage": [
+    "swing-audio-visual-fusion-tuning",
+    "pose-backed-impact-evidence-0.5.1"
+  ],
+  "notForPuttEvaluation": true,
+  "identity": {
+    "assetHash": "removed",
+    "fileName": "removed",
+    "captureTime": "removed",
+    "framesStored": false,
+    "audioStored": false
+  },
+  "media": {
+    "durationSeconds": 288,
+    "width": 1080,
+    "height": 1440,
+    "environment": "indoor-screen-golf",
+    "players": "multiple-alternating",
+    "puttCount": "none-or-negligible"
+  },
+  "audioStudy": {
+    "averageScore": 1.158,
+    "peakScore": 1.76,
+    "topMomentCount": 12,
+    "topMomentRanges": {
+      "peak": [0.892, 0.958],
+      "rms": [0.031, 0.075],
+      "crossingRate": [0.021, 0.104],
+      "rise": [0.318, 0.399],
+      "afterglow": [0.0, 1.773],
+      "score": [1.189, 1.76]
+    }
+  },
+  "visualStudy": {
+    "sampledFrameCount": 24,
+    "averageMotion": 0.063,
+    "peakMotion": 0.191,
+    "averageBrightnessChange": 0.016,
+    "peakBrightnessChange": 0.048
+  },
+  "lessons": [
+    "실내 스크린 골프에서는 화면 격자 움직임이 약할 수 있다.",
+    "시간이 정렬된 신뢰도 높은 자세 임팩트가 약한 격자 움직임을 대신할 수 있다(0.5.1).",
+    "충격음 판정은 항상 필수로 유지한다.",
+    "퍼팅 판정 품질을 평가하는 근거로 사용하지 않는다."
+  ]
+}

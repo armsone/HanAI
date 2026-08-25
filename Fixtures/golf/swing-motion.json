@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 1,
+  "golfModelVersion": "0.7.0",
+  "kind": "swingMotion",
+  "description": "GolfSwingMotionAnalyzer 상태기계 검증. 샘플은 합성 수치이며 원본 영상과 무관하다.",
+  "defaults": {
+    "globalMotion": 0.04,
+    "widespreadMotion": 0.2,
+    "concentration": 0.6,
+    "brightnessChange": 0.02,
+    "dominantRegion": 1
+  },
+  "cases": [
+    {
+      "id": "full-swing-opens-impact-window",
+      "description": "정지 주소(0.55초) → 국소 백스윙 2샘플 → 가속 다운스윙이면 임팩트 창이 열린다.",
+      "samples": [
+        { "time": 0.0, "localMotion": 0.05 },
+        { "time": 0.3, "localMotion": 0.05 },
+        { "time": 0.6, "localMotion": 0.05 },
+        { "time": 0.8, "localMotion": 0.13 },
+        { "time": 0.95, "localMotion": 0.15 },
+        { "time": 1.12, "localMotion": 0.18 },
+        { "time": 1.3, "localMotion": 0.27 }
+      ],
+      "expect": {
+        "phase": "downswing",
+        "isImpactWindow": true,
+        "minConfidence": 0.72,
+        "impactTime": 1.3
+      }
+    },
+    {
+      "id": "camera-pan-blocks-impact-window",
+      "description": "화면 전체가 두 번 연속 움직이면 초기화되고 마지막 전역 변화 시각이 기록된다.",
+      "samples": [
+        { "time": 0.0, "localMotion": 0.05 },
+        { "time": 0.3, "localMotion": 0.05 },
+        { "time": 0.6, "localMotion": 0.05 },
+        { "time": 0.8, "localMotion": 0.4, "globalMotion": 0.2, "widespreadMotion": 0.8 },
+        { "time": 0.9, "localMotion": 0.5, "globalMotion": 0.22, "widespreadMotion": 0.82 }
+      ],
+      "expect": {
+        "phase": "seekingAddress",
+        "isImpactWindow": false,
+        "lastGlobalChangeTime": 0.9
+      }
+    },
+    {
+      "id": "motion-without-quiet-address-never-arms",
+      "description": "정지 주소 없이 바로 움직이면 백스윙으로 인정하지 않는다.",
+      "samples": [
+        { "time": 0.0, "localMotion": 0.13 },
+        { "time": 0.15, "localMotion": 0.15 },
+        { "time": 0.3, "localMotion": 0.18 },
+        { "time": 0.45, "localMotion": 0.27 }
+      ],
+      "expect": {
+        "phase": "seekingAddress",
+        "isImpactWindow": false
+      }
+    }
+  ]
+}

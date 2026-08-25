@@ -1,0 +1,164 @@
+{
+  "schemaVersion": 1,
+  "golfModelVersion": "0.7.0",
+  "kind": "puttStroke",
+  "description": "GolfPuttStrokeAnalyzer(무음 퍼팅 안전망) 검증. 아이언 반례는 2026-08-24 아이언 negative label 학습 메모를 수치로 옮긴 합성 시퀀스다.",
+  "defaults": {
+    "handY": 0.0,
+    "coreX": 0.5,
+    "coreY": 0.5,
+    "bodyScale": 0.2,
+    "confidence": 0.9
+  },
+  "cases": [
+    {
+      "id": "valid-putt-sequence-confirms",
+      "description": "정지 0.6초 → 백스윙 0.30 → 주소 통과 복귀 2샘플 → 팔로스루 2샘플이면 확정된다. 0.7.0 latch는 0.60초 유지.",
+      "samples": [
+        { "time": 0.0, "handX": 0.0 },
+        { "time": 0.2, "handX": 0.0 },
+        { "time": 0.4, "handX": 0.0 },
+        { "time": 0.6, "handX": 0.0 },
+        { "time": 0.8, "handX": 0.10 },
+        { "time": 1.0, "handX": 0.25 },
+        { "time": 1.2, "handX": 0.30 },
+        { "time": 1.4, "handX": 0.22 },
+        { "time": 1.6, "handX": 0.08 },
+        { "time": 1.8, "handX": -0.06 },
+        { "time": 2.0, "handX": -0.10 }
+      ],
+      "expect": {
+        "phase": "confirmedStroke",
+        "isConfirmedStroke": true,
+        "minConfidence": 0.72,
+        "strokeTime": 1.6,
+        "latchedAt": [2.1, 2.55],
+        "notLatchedAt": [2.61]
+      }
+    },
+    {
+      "id": "standing-still-never-confirms",
+      "description": "주소 자세로 서 있기만 하면 촬영하지 않는다.",
+      "samples": [
+        { "time": 0.0, "handX": 0.0 },
+        { "time": 0.2, "handX": 0.0 },
+        { "time": 0.4, "handX": 0.0 },
+        { "time": 0.6, "handX": 0.0 },
+        { "time": 0.8, "handX": 0.0 },
+        { "time": 1.0, "handX": 0.0 },
+        { "time": 1.2, "handX": 0.0 },
+        { "time": 1.4, "handX": 0.0 },
+        { "time": 1.6, "handX": 0.0 },
+        { "time": 1.8, "handX": 0.0 },
+        { "time": 2.0, "handX": 0.0 },
+        { "time": 2.2, "handX": 0.0 },
+        { "time": 2.4, "handX": 0.0 },
+        { "time": 2.6, "handX": 0.0 },
+        { "time": 2.8, "handX": 0.0 },
+        { "time": 3.0, "handX": 0.0 },
+        { "time": 3.2, "handX": 0.0 },
+        { "time": 3.4, "handX": 0.0 },
+        { "time": 3.6, "handX": 0.0 },
+        { "time": 3.8, "handX": 0.0 }
+      ],
+      "expect": {
+        "phase": "addressed",
+        "isConfirmedStroke": false,
+        "notLatchedAt": [4.0]
+      }
+    },
+    {
+      "id": "waggle-below-threshold-stays-addressed",
+      "description": "0.06 미만의 왜글은 백스윙으로 보지 않는다.",
+      "samples": [
+        { "time": 0.0, "handX": 0.0 },
+        { "time": 0.2, "handX": 0.0 },
+        { "time": 0.4, "handX": 0.0 },
+        { "time": 0.6, "handX": 0.0 },
+        { "time": 0.8, "handX": 0.04 }
+      ],
+      "expect": {
+        "phase": "addressed",
+        "isConfirmedStroke": false,
+        "notLatchedAt": [0.9]
+      }
+    },
+    {
+      "id": "iron-backswing-exceeds-putt-cap",
+      "description": "아이언 반례: 백스윙 폭이 0.60을 넘으면 퍼팅 판정을 초기화하고 이어지는 팔로스루도 무시한다.",
+      "samples": [
+        { "time": 0.0, "handX": 0.0 },
+        { "time": 0.2, "handX": 0.0 },
+        { "time": 0.4, "handX": 0.0 },
+        { "time": 0.6, "handX": 0.0 },
+        { "time": 0.8, "handX": 0.10 },
+        { "time": 1.0, "handX": 0.40 },
+        { "time": 1.2, "handX": 0.70 },
+        { "time": 1.4, "handX": -0.06 },
+        { "time": 1.6, "handX": -0.10 }
+      ],
+      "expect": {
+        "phase": "seekingAddress",
+        "isConfirmedStroke": false,
+        "notLatchedAt": [1.7]
+      }
+    },
+    {
+      "id": "iron-fast-return-through-address-resets",
+      "description": "아이언 반례: 주소 지점을 1.5/s보다 빠르게 통과하면(return speed 2.4) 스윙으로 보고 초기화한다.",
+      "samples": [
+        { "time": 0.0, "handX": 0.0 },
+        { "time": 0.2, "handX": 0.0 },
+        { "time": 0.4, "handX": 0.0 },
+        { "time": 0.6, "handX": 0.0 },
+        { "time": 0.8, "handX": 0.10 },
+        { "time": 1.0, "handX": 0.30 },
+        { "time": 1.2, "handX": 0.50 },
+        { "time": 1.4, "handX": 0.02 }
+      ],
+      "expect": {
+        "phase": "seekingAddress",
+        "isConfirmedStroke": false,
+        "notLatchedAt": [1.5]
+      }
+    },
+    {
+      "id": "large-follow-through-resets",
+      "description": "아이언 반례: 팔로스루가 max(0.30, peak×1.2)를 넘으면 초기화한다.",
+      "samples": [
+        { "time": 0.0, "handX": 0.0 },
+        { "time": 0.2, "handX": 0.0 },
+        { "time": 0.4, "handX": 0.0 },
+        { "time": 0.6, "handX": 0.0 },
+        { "time": 0.8, "handX": 0.10 },
+        { "time": 1.0, "handX": 0.25 },
+        { "time": 1.2, "handX": 0.30 },
+        { "time": 1.4, "handX": 0.22 },
+        { "time": 1.6, "handX": 0.08 },
+        { "time": 1.8, "handX": -0.50 }
+      ],
+      "expect": {
+        "phase": "seekingAddress",
+        "isConfirmedStroke": false,
+        "notLatchedAt": [1.9]
+      }
+    },
+    {
+      "id": "large-core-motion-resets-any-phase",
+      "description": "아이언·걷기 반례: 몸통 중심이 0.9/s보다 빠르게 움직이면 어느 단계든 초기화한다.",
+      "samples": [
+        { "time": 0.0, "handX": 0.0 },
+        { "time": 0.2, "handX": 0.0 },
+        { "time": 0.4, "handX": 0.0 },
+        { "time": 0.6, "handX": 0.0 },
+        { "time": 0.8, "handX": 0.10 },
+        { "time": 1.0, "handX": 0.25, "coreX": 0.7 }
+      ],
+      "expect": {
+        "phase": "seekingAddress",
+        "isConfirmedStroke": false,
+        "notLatchedAt": [1.1]
+      }
+    }
+  ]
+}

@@ -1,0 +1,101 @@
+# ---------------------------------------------------------------------------
+# HanAI 개인정보 경계
+# 원본 영상·사진·프레임·오디오는 절대 저장소에 넣지 않는다.
+# 저장소에는 익명화된 수치 특징, 라벨, 검증 fixture(JSON)만 남긴다.
+# ---------------------------------------------------------------------------
+
+# 로컬 전용 원본 투입함과 분석 중간물 (하위 내용 전체 차단)
+Inbox/
+Work/
+Frames/
+Exports/
+
+# 영상
+*.mov
+*.MOV
+*.mp4
+*.MP4
+*.m4v
+*.M4V
+*.avi
+*.mkv
+*.webm
+*.hevc
+*.3gp
+*.mts
+*.m2ts
+
+# 사진·이미지
+*.jpg
+*.JPG
+*.jpeg
+*.JPEG
+*.png
+*.PNG
+*.gif
+*.heic
+*.HEIC
+*.heif
+*.HEIF
+*.tif
+*.tiff
+*.bmp
+*.webp
+*.raw
+*.dng
+*.DNG
+*.cr2
+*.arw
+
+# 오디오
+*.wav
+*.WAV
+*.aif
+*.aiff
+*.caf
+*.m4a
+*.aac
+*.mp3
+*.flac
+
+# 관절 좌표·프레임 덤프 같은 대용량 중간물
+*.npy
+*.npz
+*.pkl
+*.parquet
+*.bin
+*.h5
+*.csv
+
+# Photos 내보내기·시스템 파일
+*.photoslibrary
+.DS_Store
+._*
+Thumbs.db
+
+# Swift Package
+.build/
+.swiftpm/
+*.xcodeproj
+*.xcworkspace
+xcuserdata/
+DerivedData/
+Package.resolved
+
+# Gradle / Kotlin
+android/.gradle/
+android/build/
+android/**/build/
+android/.kotlin/
+android/local.properties
+.gradle/
+build/
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# 익명화된 JSON fixture와 학습 요약은 허용한다.
+!Fixtures/**/*.json
+!docs/**/*.json

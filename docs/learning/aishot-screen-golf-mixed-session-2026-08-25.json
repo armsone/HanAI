@@ -1,0 +1,84 @@
+{
+  "schemaVersion": 1,
+  "studyDate": "2026-08-25",
+  "feature": "AiShot",
+  "labelStatus": "human-confirmed-session-level",
+  "sessionTruth": {
+    "sourceSessionDuration": "about-3-hours",
+    "outputContainsMixedClubs": [
+      "driver",
+      "wood",
+      "utility",
+      "iron",
+      "approach"
+    ],
+    "puttOccurredInSourceSession": true,
+    "puttCapturedInOutput": false,
+    "perClipClubLabelsAvailable": false,
+    "exactPositiveAndFalsePositiveCountsAvailable": false
+  },
+  "identity": {
+    "assetHash": "removed",
+    "fileName": "removed",
+    "captureTime": "removed",
+    "sourcePath": "not-recorded",
+    "framesStored": false,
+    "audioStored": false,
+    "jointCoordinatesStored": false
+  },
+  "media": {
+    "outputDurationSeconds": 1352,
+    "width": 1080,
+    "height": 1440,
+    "environment": "indoor-screen-golf",
+    "players": "multiple-alternating",
+    "clipCount": 338,
+    "clipDurationSeconds": 4
+  },
+  "coverage": {
+    "clipsAudited": 338,
+    "audioWindows": 27040,
+    "audioWindowSeconds": 0.05,
+    "genericImpactCandidates": 322,
+    "clipsWithCurrentLikeAudioTriggerInExpectedWindow": 280,
+    "clipsWithPoseSequenceOfAtLeast3Frames": 282,
+    "clipsWithAll7RequestedPoseFrames": 154,
+    "lowShotLikenessHeuristicClipsReviewed": 87,
+    "heuristicCountIsNotAHumanLabel": true
+  },
+  "aggregateQuantiles": {
+    "audioScore": { "min": 0.0509, "p10": 0.0897, "p25": 0.1196, "median": 0.2044, "p75": 0.4748, "p90": 0.5269, "max": 0.6414 },
+    "audioPeak": { "min": 0.0770, "p10": 0.1354, "p25": 0.1814, "median": 0.3162, "p75": 0.8590, "p90": 0.9115, "max": 0.9538 },
+    "audioRise": { "min": 1.5706, "p10": 2.5336, "p25": 3.1891, "median": 6.1805, "p75": 15.3702, "p90": 20.0217, "max": 28.6927 },
+    "visualMotion": { "min": 0.0013, "p10": 0.0100, "p25": 0.0174, "median": 0.0262, "p75": 0.0339, "p90": 0.0411, "max": 0.0679 },
+    "brightnessChange": { "min": 0.0, "p10": 0.0007, "p25": 0.0018, "median": 0.0044, "p75": 0.0087, "p90": 0.0140, "max": 0.0417 },
+    "handRangeInBodyWidths": { "min": 0.0, "p10": 0.0, "p25": 0.4634, "median": 2.1552, "p75": 3.6489, "p90": 4.4588, "max": 6.4519 },
+    "coreRangeInBodyWidths": { "min": 0.0, "p10": 0.0, "p25": 0.2123, "median": 0.4727, "p75": 0.9925, "p90": 1.5782, "max": 5.6398 },
+    "peakHandSpeedInBodyWidthsPerSecond": { "min": 0.0, "p10": 0.0, "p25": 1.3154, "median": 5.2146, "p75": 10.4722, "p90": 12.0309, "max": 16.9809 }
+  },
+  "observedFalsePositivePatterns": [
+    "empty-mat-or-player-absent-with-simulator-transition",
+    "player-walking-in-out-or-player-change",
+    "standing-waiting-or-repositioning",
+    "ball-placement-retrieval-or-club-cleanup"
+  ],
+  "lessons": [
+    "큰 스윙 상위 후보만 보면 혼합 클럽 세션의 작은 샷과 오탐을 함께 배울 수 없다.",
+    "약한 소리와 작은 화면 움직임은 실제 어프로치일 수 있으므로 음량·움직임 문턱을 일괄 상승시키지 않는다.",
+    "일반 샷은 충격음만이 아니라 안정된 준비 뒤의 연속 동작과 정렬된 임팩트 근거를 요구해야 한다.",
+    "퍼팅은 원 세션에 있었지만 출력에 없었으므로 양성 누락 증거다. 출력만으로 퍼팅 모양이나 정확도를 만들어내지 않는다.",
+    "저전력·발열 상태에서도 짧은 퍼팅 시퀀스를 볼 수 있도록 자세 표본 간격과 근거 유효 시간을 일관되게 맞춘다."
+  ],
+  "policyUse": {
+    "eligibleForAudioThresholdTuning": false,
+    "eligibleForPerClubThresholds": false,
+    "eligibleForSequenceGuardChange": true,
+    "eligibleForPuttCadenceRobustnessChange": true
+  },
+  "nextEvidenceNeeded": [
+    "대표성 있는 실제 퍼팅 양성 클립",
+    "클립별 클럽 종류와 샷·비샷 정답",
+    "야외와 다른 카메라 각도",
+    "0.7.0 적용 뒤 같은 세션에서 퍼팅 포함 누락·오탐 비교"
+  ]
+}

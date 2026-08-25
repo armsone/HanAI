@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "golfModelVersion": "0.7.0",
+  "kind": "audioImpact",
+  "description": "AudioImpactClassifier.detectImpact 실시간 판정 검증. 지표는 합성 수치다.",
+  "cases": [
+    {
+      "id": "sharp-impact-normal-triggers",
+      "description": "조용한 baseline 위의 날카로운 충격음은 strong impact로 트리거된다.",
+      "metrics": { "rms": 0.06, "peak": 0.30, "crossingRate": 0.12 },
+      "baseline": 0.008,
+      "previousRecentLevel": 0.008,
+      "sensitivity": "normal",
+      "expect": { "isTriggered": true, "minConfidence": 0.0001 }
+    },
+    {
+      "id": "distant-sharp-impact-normal-triggers",
+      "description": "멀리서 들리는 작은 충격음도 crest·crossing이 충분하면 distant impact로 트리거된다.",
+      "metrics": { "rms": 0.02, "peak": 0.10, "crossingRate": 0.09 },
+      "baseline": 0.008,
+      "previousRecentLevel": 0.008,
+      "sensitivity": "normal",
+      "expect": { "isTriggered": true }
+    },
+    {
+      "id": "speech-like-prompt-is-suppressed",
+      "description": "준비 음성처럼 완만하고 저주파인 소리는 트리거하지 않고 confidence 0을 준다.",
+      "metrics": { "rms": 0.05, "peak": 0.10, "crossingRate": 0.05 },
+      "baseline": 0.03,
+      "previousRecentLevel": 0.05,
+      "sensitivity": "quiet",
+      "expect": { "isTriggered": false, "confidenceIsZero": true }
+    },
+    {
+      "id": "faint-noise-under-noisy-thresholds",
+      "description": "시끄러운 환경 임계에서 아주 약한 잡음은 트리거하지 않는다.",
+      "metrics": { "rms": 0.004, "peak": 0.02, "crossingRate": 0.02 },
+      "baseline": 0.008,
+      "previousRecentLevel": 0.008,
+      "sensitivity": "noisy",
+      "expect": { "isTriggered": false }
+    },
+    {
+      "id": "automatic-quiet-baseline-accepts-faint-sharp",
+      "description": "automatic: baseline ≤ 0.009이면 quiet 임계를 써서 약한 날카로운 소리를 받는다.",
+      "metrics": { "rms": 0.012, "peak": 0.075, "crossingRate": 0.07 },
+      "baseline": 0.005,
+      "previousRecentLevel": 0.005,
+      "sensitivity": "automatic",
+      "expect": { "isTriggered": true }
+    },
+    {
+      "id": "automatic-noisy-baseline-rejects-faint-sharp",
+      "description": "automatic: baseline ≥ 0.026이면 noisy 임계를 써서 같은 소리를 거부한다.",
+      "metrics": { "rms": 0.012, "peak": 0.075, "crossingRate": 0.07 },
+      "baseline": 0.03,
+      "previousRecentLevel": 0.03,
+      "sensitivity": "automatic",
+      "expect": { "isTriggered": false }
+    }
+  ]
+}
