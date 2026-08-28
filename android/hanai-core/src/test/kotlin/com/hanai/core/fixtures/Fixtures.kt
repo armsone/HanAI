@@ -23,6 +23,11 @@ internal object Fixtures {
         return MiniJson.parse(file.readText()) as JsonObject
     }
 
+    fun loadPath(relativePath: String): JsonObject {
+        val file = File(directory, relativePath)
+        return MiniJson.parse(file.readText()) as JsonObject
+    }
+
     fun visualSample(raw: JsonObject, defaults: JsonObject): GolfSwingVisualSample = GolfSwingVisualSample(
         time = raw.double("time"),
         localMotion = raw.double("localMotion"),

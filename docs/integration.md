@@ -1,11 +1,11 @@
 # 앱 연결 (Integration)
 
-이 문서는 HanAI 코어를 HanClip Apple/Android(또는 다른 앱)에 연결하는 방법과, 기존 앱 구현을 유지한 채 무중단으로 옮기는 절차를 적는다.
+이 문서는 한양 코어(기술 모듈 `HanAI`)를 HanClip Apple/Android(또는 다른 앱)에 연결하는 방법과, 기존 앱 구현을 유지한 채 무중단으로 옮기는 절차를 적는다.
 **이번 이관 작업에서는 앱을 수정하지 않았다.** 아래는 다음 단계의 계획이다.
 
 ## 0. 한양 동기화 계약
 
-- 대표님이 말씀하시는 `한양`은 공식 프로젝트 `HanAI`다.
+- 제품의 공식 명칭은 `한양`이며, 저장소·Swift 모듈 등 기존 기술 식별자만 `HanAI`를 유지한다.
 - HanAI, HanClip Apple, HanClip Android는 `project-sync`의 `hanclip` 그룹으로 묶는다.
 - 한양의 모델·성능·기능 변경은 공통 fixture와 Swift/Kotlin 코어에서 먼저 독립적으로 성장시킨다. 이 단계에서는 두 앱 adapter와 호출 경로를 바꾸지 않는다.
 - 패키지 직접 소비 전까지는 앱의 기존 구현에도 같은 변경을 옮긴다. 직접 소비 전환 뒤에는 HanAI 버전 상승과 adapter 호환성 검증으로 전달한다.
@@ -23,12 +23,12 @@
 
 ### 의존성 추가
 
-Xcode → Package Dependencies → HanAI Git 저장소 URL + 태그(`0.1.0`).
+Xcode → Package Dependencies → HanAI Git 저장소 URL + 태그(`0.2.0`).
 개발 중 로컬 확인이 필요하면 Xcode "Add Local Package"를 쓰되, 프로젝트 파일에 남는 참조는 워크스페이스 기준 상대 경로여야 하며 절대 경로가 들어간 변경은 커밋하지 않는다.
 
 ```swift
 // Package.swift 기반 앱이라면
-.package(url: "<HanAI git url>", from: "0.1.0")
+.package(url: "<HanAI git url>", from: "0.2.0")
 ```
 
 ### Adapter 매핑
@@ -44,6 +44,8 @@ Xcode → Package Dependencies → HanAI Git 저장소 URL + 태그(`0.1.0`).
 | `GolfPuttStrokeAnalyzer` 반환값 직접 사용 | `latchedConfirmedStroke(at:)` + `consumeConfirmedStroke()` | 0.7.0 확정 신호는 0.60초 latch |
 
 Vision 관절 → `GolfSwingPoseSample` 변환(손목 평균, 어깨·골반 중심, 어깨 폭 정규화)은 앱의 기존 코드를 그대로 adapter로 옮긴다.
+
+사진 유사도 기능을 쓰는 앱은 Vision feature print 거리와 기기 내 선명도 점수를 adapter에서 만든 뒤 `ImageSimilaritySelector`에 전달한다. 코어에는 사진 바이트·파일명·사용자 식별자를 넘기지 않는다. 원본을 삭제하지 않고 업로드·분석용 사본만 대표 인덱스로 줄이는 방식을 권장한다.
 
 ### 이름 충돌
 
@@ -83,7 +85,7 @@ ML Kit/MediaPipe 관절 → `GolfSwingPoseSample` 변환은 앱 adapter에 둔�
 
 | 단계 | 내용 | 완료 기준 |
 | --- | --- | --- |
-| 0. 패키지 준비 | HanAI `swift test`, `gradle test` 통과. 태그 `0.1.0`. | 두 플랫폼 fixture 테스트 녹색 |
+| 0. 패키지 준비 | HanAI `swift test`, `gradle test` 통과. 태그 `0.2.0`. | 두 플랫폼 fixture 테스트 녹색 |
 | 1. 의존성만 추가 | 앱에 HanAI를 추가하되 호출하지 않는다. 빌드·앱 크기·시작 시간 확인. | 앱 동작 변화 없음 |
 | 2. 그림자 모드 | 기존 판정 경로는 그대로 두고, 같은 입력을 HanAI 분석기에도 넣어 결과를 비교한다. 불일치는 기기 내 디버그 카운터로만 집계(원본·좌표·시각 로그 금지). | 실사용 샘플에서 불일치율과 원인 파악. 4절 차이표 항목별 확인 |
 | 3. 플래그 전환 | 디버그/내부 빌드에서 HanAI 결과를 실제 트리거로 사용하는 플래그를 켠다. 기본값은 기존 경로. | 내부 사용자 검증 |

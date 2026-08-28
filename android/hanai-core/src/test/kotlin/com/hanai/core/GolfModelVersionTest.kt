@@ -9,7 +9,7 @@ import org.junit.Test
 class GolfModelVersionTest {
     @Test
     fun productAndModelVersions() {
-        assertEquals("0.1.0", HanAIVersion.product)
+        assertEquals("0.2.0", HanAIVersion.product)
         assertEquals("0.7.0", HanAIVersion.golfModel)
         assertEquals(GolfModelVersion.V0_7_0, GolfModelVersion.current)
         assertEquals(9, GolfModelVersion.values().size)

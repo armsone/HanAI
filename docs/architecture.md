@@ -1,4 +1,4 @@
-# HanAI 아키텍처
+# 한양 아키텍처
 
 ## 1. 계층
 
@@ -13,12 +13,13 @@
 │  - 마이크 PCM → AudioImpactMetrics + baseline/recentLevel      │
 │  - 시계·상태 → referenceTime, secondsSince…, isReady 등          │
 ├──────────────────────────────────────────────────────────────┤
-│ HanAI 코어 (이 저장소, 플랫폼 중립, 순수 함수/상태기계)          │
+│ 한양 코어 (기술 모듈 HanAI, 플랫폼 중립, 순수 함수/상태기계)     │
 │  - GolfModelVersion / HanAIVersion                             │
 │  - AudioImpactClassifier                                       │
 │  - GolfSwingMotionAnalyzer / GolfSwingPoseAnalyzer             │
 │  - GolfPuttStrokeAnalyzer                                      │
 │  - GolfSwingFusionPolicy / GolfPuttFusionPolicy                │
+│  - ImageSimilaritySelector (사진 대표본 선택)                    │
 └──────────────────────────────────────────────────────────────┘
 ```
 
@@ -47,7 +48,7 @@ Swift는 `struct`/`enum`, Kotlin은 `data class`/`enum class`/`class`다.
 
 | 타입 | 멤버 | 의미 |
 | --- | --- | --- |
-| `HanAIVersion` | `product = "0.1.0"`, `golfModel` | 제품 버전, 현재 골프 모델 문자열 |
+| `HanAIVersion` | `product = "0.2.0"`, `golfModel` | 제품 버전, 현재 골프 모델 문자열 |
 | `GolfModelVersion` | `v0_1_0 … v0_7_0`, `current = v0_7_0` | 모델 계보와 롤백 지점 |
 | | `title`, `releaseDate`, `featureSummary` | UI 표시용 문자열(한국어) |
 | | `supportsRealtimeVisualAssist` | 0.2.0+ |
@@ -131,6 +132,15 @@ Swift는 `struct`/`enum`, Kotlin은 `data class`/`enum class`/`class`다.
 
 모든 조건이 동시에 참이어야 true: `supportsSoundlessPuttFallback`, `stroke.isConfirmedStroke`, `stroke.confidence ≥ 0.72`, `poseObservationConfidence ≥ 0.72`, 자세·프레임 나이 ≤ 0.35초(0.6.0) 또는 ≤ 0.55초(0.7.0), 마지막 전역 변화 후 ≥ 1.0초, `isReady`, ready 억제 구간 아님, 대기 중 트리거 없음.
 
+### 3.7 이미지 유사도 선택
+
+`ImageSimilaritySelector.representativeIndices(candidates, distances, threshold)`는 플랫폼 adapter가 만든 익명 수치만 받아 가까운 중복 사진의 대표 한 장을 고른다.
+
+- 기본 가까운 중복 임계값은 Swift/Kotlin 공통 `0.12`다.
+- 유사한 묶음에서는 `sharpness + log(pixelCount) / 100` 점수가 높은 사진을 남긴다.
+- 두 사진 사이 거리 자료가 없거나 임계값보다 크면 서로 다른 사진으로 보존한다.
+- Vision, ML Kit, 원본 사진 디코딩과 전송 상한 처리는 앱 adapter 책임이다.
+
 ## 4. 이관 시 통일한 플랫폼 차이 (Codex 검증 포인트)
 
 HanClip Apple과 Android 0.6.0 구현은 세부 동작이 달랐다. HanAI는 하나의 계약으로 통일했으며 두 앱은 이관 시 아래 차이를 흡수해야 한다.
@@ -163,11 +173,12 @@ Apple `rankedImpactTimes`(오프라인 하이라이트 순위)는 골프 실시�
 | 시계 통일, `secondsSince…` 계산, ready/억제 구간 상태 | 앱 상태 | 앱 상태 |
 | 저전력·발열 시 자세 분석 빈도 조절 | ProcessInfo thermal state | PowerManager |
 | 촬영 시작·저장·UI | 앱 | 앱 |
+| 이미지 특징 거리·선명도 추출 → `ImageSimilarityCandidate`/`ImagePairDistance` | Vision + 기기 내 픽셀 계산 | 앱 선택 이미지 특징 추출기 |
 
 원본 프레임·관절 좌표·오디오는 adapter 안에서만 존재하며 로그·업로드·저장하지 않는다.
 
 ## 6. 테스트 전략
 
-- `Fixtures/golf/*.json` 하나를 Swift XCTest와 Kotlin JUnit이 모두 읽는다(`Fixtures/README.md`).
+- `Fixtures/golf/*.json`과 `Fixtures/image/*.json`을 Swift XCTest와 Kotlin JUnit이 함께 읽는다(`Fixtures/README.md`).
 - fixture는 상태기계 시퀀스, 오디오 판정, 두 융합 정책, 롤백 플래그를 덮는다.
 - 새 동작은 fixture 케이스 추가 → 두 플랫폼 구현 → 두 테스트 통과 순서로 넣는다.

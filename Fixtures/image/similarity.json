@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "hanAIProductVersion": "0.2.0",
+  "kind": "image-similarity-selection",
+  "cases": [
+    {
+      "id": "near-duplicate-keeps-sharper-frame",
+      "candidates": [
+        { "index": 0, "sharpness": 0.40, "pixelCount": 12000000 },
+        { "index": 1, "sharpness": 0.75, "pixelCount": 12000000 },
+        { "index": 2, "sharpness": 0.55, "pixelCount": 12000000 }
+      ],
+      "distances": [
+        { "firstIndex": 0, "secondIndex": 1, "distance": 0.04 },
+        { "firstIndex": 0, "secondIndex": 2, "distance": 0.44 },
+        { "firstIndex": 1, "secondIndex": 2, "distance": 0.42 }
+      ],
+      "expected": [1, 2]
+    },
+    {
+      "id": "different-details-are-preserved",
+      "candidates": [
+        { "index": 0, "sharpness": 0.60, "pixelCount": 8000000 },
+        { "index": 1, "sharpness": 0.65, "pixelCount": 8000000 },
+        { "index": 2, "sharpness": 0.70, "pixelCount": 8000000 }
+      ],
+      "distances": [
+        { "firstIndex": 0, "secondIndex": 1, "distance": 0.31 },
+        { "firstIndex": 0, "secondIndex": 2, "distance": 0.49 },
+        { "firstIndex": 1, "secondIndex": 2, "distance": 0.28 }
+      ],
+      "expected": [0, 1, 2]
+    },
+    {
+      "id": "uncertain-borderline-pair-is-preserved",
+      "candidates": [
+        { "index": 0, "sharpness": 0.60, "pixelCount": 8000000 },
+        { "index": 1, "sharpness": 0.80, "pixelCount": 8000000 }
+      ],
+      "distances": [
+        { "firstIndex": 0, "secondIndex": 1, "distance": 0.13 }
+      ],
+      "expected": [0, 1]
+    }
+  ]
+}

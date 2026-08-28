@@ -4,7 +4,7 @@ import HanAI
 /// 제품 버전, 현재 모델 계보, 롤백 플래그 계약을 검증한다.
 final class GolfModelVersionTests: XCTestCase {
     func testProductAndModelVersions() {
-        XCTAssertEqual(HanAIVersion.product, "0.1.0")
+        XCTAssertEqual(HanAIVersion.product, "0.2.0")
         XCTAssertEqual(HanAIVersion.golfModel, "0.7.0")
         XCTAssertEqual(GolfModelVersion.current, .v0_7_0)
         XCTAssertEqual(GolfModelVersion.allCases.count, 9)
