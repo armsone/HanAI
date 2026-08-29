@@ -56,7 +56,7 @@ Vision 관절 → `GolfSwingPoseSample` 변환(손목 평균, 어깨·골반 중
 ### 의존성 추가
 
 권장 순서:
-1. **로컬 검증**: `android/` 프로젝트에서 `gradle :hanai-core:publishToMavenLocal`(publish 플러그인 추가 후) → 앱에서 `mavenLocal()` + `implementation("com.hanai:hanai-core:0.1.0")`.
+1. **로컬 검증**: `android/` 프로젝트에서 `gradle :hanai-core:publishToMavenLocal`(publish 플러그인 추가 후) → 앱에서 `mavenLocal()` + `implementation("com.hanai:hanai-core:0.2.0")`.
 2. **팀 공유**: 사내 Maven 저장소 또는 GitHub Packages에 배포하고 앱은 좌표만 참조.
 3. 개발 중 임시로 composite build(`includeBuild("../HanAI/android")`)를 쓸 수 있으나 상대 경로만 허용하고 커밋하지 않는다.
 
