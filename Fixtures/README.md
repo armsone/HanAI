@@ -19,6 +19,9 @@ Swift(`Tests/HanAITests`)와 Kotlin(`android/hanai-core/src/test`)이 **같은 �
 `golfModelVersion`은 fixture가 검증하는 모델 계보다. 테스트는 이 값이 `GolfModelVersion.current`와 같은지 먼저 확인한다.
 모델을 롤백하거나 올릴 때는 fixture도 함께 갱신한다.
 
+사진 유사도 fixture는 골프 모델과 독립된 제품 기능이므로 `golfModelVersion` 대신
+`hanAIProductVersion`을 사용한다. 테스트는 이 값이 `HanAIVersion.product`와 같은지 확인한다.
+
 ## kind별 스키마
 
 | kind | 입력 | expect |
@@ -29,6 +32,7 @@ Swift(`Tests/HanAITests`)와 Kotlin(`android/hanai-core/src/test`)이 **같은 �
 | `audioImpact` | `metrics{rms,peak,crossingRate}`, `baseline`, `previousRecentLevel`, `sensitivity` | `isTriggered`, `confidenceIsZero?`, `minConfidence?` |
 | `swingFusion` | `decision`, `metrics`, `motion`, `pose|null`, `referenceTime`, `requiresPoseConfirmation`, `hasRecentVisualFrame`, `isInsideReadyPromptWindow`, `modelVersion` | `true|false` |
 | `puttFusion` | `stroke|null`, `poseObservationConfidence`, `secondsSinceLatestPose`, `secondsSinceLatestVisualFrame`, `secondsSinceLastGlobalChange`, `isReady`, `isInsideReadyPromptWindow`, `isTriggerPending`, `modelVersion` | `true|false` |
+| `image-similarity-selection` | `threshold`, `candidates[]`, `distances[]` | `representativeIndices` |
 
 `latchedAt`은 순서대로 먼저 호출하고 `notLatchedAt`은 그 뒤에 호출한다(latch는 만료 시 비워지므로 순서가 중요하다).
 
