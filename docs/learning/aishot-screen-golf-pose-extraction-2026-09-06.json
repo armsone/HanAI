@@ -1,0 +1,35 @@
+{
+  "title": "스크린골프 전체 라벨의 프레임 자세 변환 검증",
+  "date": "2026-09-06",
+  "source": "대표님이 제공한 전체·부분 세션의 확정 라벨(원본 식별정보 제거)",
+  "extraction": {
+    "labeledCases": 281,
+    "numericPoseSamples": 3231,
+    "sampleIntervalSeconds": 0.5,
+    "storedData": "local Work/hanai-video-analysis/putter-pose-observed.json",
+    "storedFields": ["time", "handX", "handY", "coreX", "coreY", "bodyScale", "confidence"]
+  },
+  "labelCounts": {
+    "nonShotNegative": 218,
+    "putterPositive": 15,
+    "putterNegative": 27,
+    "wedgePositive": 12,
+    "ironPositive": 4,
+    "driverPositive": 4,
+    "woodPositive": 1
+  },
+  "currentStateMachineCheck": {
+    "putterPositiveConfirmed": 0,
+    "putterPositiveTotal": 15,
+    "suffixStartSearchAlsoConfirmed": 0,
+    "putterNegativeConfirmed": 0,
+    "putterNegativeTotal": 27,
+    "nonShotConfirmed": 0,
+    "nonShotTotal": 218,
+    "interpretation": "후보 창 안의 모든 가능한 시작점에서도 확정되지 않았다. 현재 임계값을 바꿀 근거가 아니라, 후보 시각과 실제 스트로크 중심의 불일치 또는 Vision 자세 추정 품질 문제를 분리해야 한다는 검증 결과다."
+  },
+  "nextAction": {
+    "required": "후보 창 안에서 실제 스트로크 중심을 다시 찾고, 검출된 관절의 연속성·신뢰도·몸통 이동을 분리 검증한다.",
+    "doNotDo": "이 결과만으로 퍼터 임계값을 낮춰 일반 이동·비샷을 퍼터로 허용하지 않는다."
+  }
+}

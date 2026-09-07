@@ -48,7 +48,7 @@ Swift는 `struct`/`enum`, Kotlin은 `data class`/`enum class`/`class`다.
 
 | 타입 | 멤버 | 의미 |
 | --- | --- | --- |
-| `HanAIVersion` | `product = "0.2.0"`, `golfModel` | 제품 버전, 현재 골프 모델 문자열 |
+| `HanAIVersion` | `product = "0.3.0"`, `golfModel` | 제품 버전, 현재 골프 모델 문자열 |
 | `GolfModelVersion` | `v0_1_0 … v0_7_0`, `current = v0_7_0` | 모델 계보와 롤백 지점 |
 | | `title`, `releaseDate`, `featureSummary` | UI 표시용 문자열(한국어) |
 | | `supportsRealtimeVisualAssist` | 0.2.0+ |

@@ -203,4 +203,56 @@ final class GolfFixtureTests: XCTestCase {
             XCTAssertEqual(result, testCase.expect, testCase.id)
         }
     }
+
+    func testDedicatedPutterDetectorSeparatesShortStrokeFromStaticAndLargeMotion() {
+        func sample(_ time: Double, handX: Double, coreX: Double = 0.5) -> GolfSwingPoseSample {
+            GolfSwingPoseSample(
+                time: time,
+                handX: handX,
+                handY: 0.5,
+                coreX: coreX,
+                coreY: 0.5,
+                bodyScale: 0.1,
+                confidence: 0.9
+            )
+        }
+
+        let putt = [
+            sample(0.0, handX: 0.00), sample(0.2, handX: 0.00), sample(0.4, handX: 0.01),
+            sample(0.6, handX: 0.10), sample(0.8, handX: 0.20), sample(1.0, handX: 0.12),
+            sample(1.2, handX: 0.02), sample(1.4, handX: 0.08), sample(1.6, handX: 0.10)
+        ]
+        let staticSamples = Array(0..<9).map { index in sample(Double(index) * 0.2, handX: 0.02) }
+        let largeMotion = [
+            sample(0.0, handX: 0.00, coreX: 0.2), sample(0.2, handX: 0.00, coreX: 0.2),
+            sample(0.4, handX: 0.10, coreX: 0.3), sample(0.6, handX: 0.35, coreX: 0.5),
+            sample(0.8, handX: 0.65, coreX: 0.8), sample(1.0, handX: 0.30, coreX: 0.95),
+            sample(1.2, handX: 0.00, coreX: 1.0), sample(1.4, handX: 0.20, coreX: 1.0),
+            sample(1.6, handX: 0.40, coreX: 1.0)
+        ]
+
+        XCTAssertTrue(GolfPutterDetector.evaluate(samples: putt).isCandidate)
+        XCTAssertFalse(GolfPutterDetector.evaluate(samples: staticSamples).isCandidate)
+        XCTAssertFalse(GolfPutterDetector.evaluate(samples: largeMotion).isCandidate)
+
+        let wideRangeFromStart = [
+            sample(0.0, handX: 0.00), sample(0.2, handX: 0.00), sample(0.4, handX: 0.01),
+            sample(0.6, handX: 0.30), sample(0.8, handX: 0.20), sample(1.0, handX: -0.05),
+            sample(1.2, handX: 0.00), sample(1.4, handX: 0.02), sample(1.6, handX: 0.04)
+        ]
+        XCTAssertFalse(GolfPutterDetector.evaluate(samples: wideRangeFromStart).isCandidate)
+
+        let padded = Array(0..<31).map { index in
+            let time = Double(index) * 0.2
+            let handX: Double
+            switch time {
+            case 2.0..<2.8: handX = [0.00, 0.00, 0.01, 0.10, 0.20, 0.12, 0.02, 0.08, 0.10][min(Int((time - 2.0) / 0.2), 8)]
+            default: handX = 0.02
+            }
+            return sample(time, handX: handX)
+        }
+        XCTAssertFalse(GolfPutterDetector.evaluate(samples: padded).isCandidate)
+        let seriesDetections = GolfPutterDetector.evaluateSeries(samples: padded)
+        XCTAssertEqual(seriesDetections.count, 1)
+    }
 }

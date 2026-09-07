@@ -36,7 +36,7 @@ public enum GolfModelVersion: String, CaseIterable, Equatable, Sendable {
         case .v0_1_0, .v0_2_0, .v0_2_1: "2026.08.06"
         case .v0_3_0, .v0_4_0, .v0_5_0: "2026.08.20"
         case .v0_5_1, .v0_6_0: "2026.08.24"
-        case .v0_7_0: "2026.08.25"
+        case .v0_7_0: "2026.09.07"
         }
     }
 

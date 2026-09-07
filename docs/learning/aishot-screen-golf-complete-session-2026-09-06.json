@@ -1,0 +1,121 @@
+{
+  "schemaVersion": 1,
+  "studyDate": "2026-09-06",
+  "feature": "AiShot",
+  "labelStatus": "human-confirmed-session-level",
+  "labelSource": "대표님이 전체 스크린골프 진행 영상의 클럽 구성을 확인한 세션 정답",
+  "usage": [
+    "complete-club-coverage-regression",
+    "putt-coverage-confirmation",
+    "full-session-shot-boundary-review"
+  ],
+  "identity": {
+    "assetHash": "removed",
+    "fileName": "removed",
+    "captureTime": "removed",
+    "sourcePath": "not-recorded",
+    "framesStored": false,
+    "audioStored": false,
+    "jointCoordinatesStored": false
+  },
+  "media": {
+    "sourceVideoCount": 2,
+    "durationSeconds": [258.882, 5286.33],
+    "fullSessionDurationSeconds": 5286.33,
+    "partialClipDurationSeconds": 258.882,
+    "width": 2160,
+    "height": 3840,
+    "environment": "indoor-screen-golf",
+    "camera": "fixed-vertical-view",
+    "audioPresent": true,
+    "recordingScope": "one-complete-session-and-one-partial-segment"
+  },
+  "humanConfirmedClubCoverage": [
+    "driver",
+    "wood",
+    "iron",
+    "wedge",
+    "putter"
+  ],
+  "audioStudy": {
+    "scope": "full-session-video-only",
+    "windowSeconds": 0.05,
+    "windowCount": 105727,
+    "rmsDb": {
+      "min": -55.813,
+      "mean": -41.268,
+      "max": -6.918,
+      "p50": -43.384,
+      "p75": -36.428,
+      "p90": -30.928,
+      "p95": -27.543,
+      "p99": -20.122
+    },
+    "peakDb": {
+      "min": -46.274,
+      "mean": -31.521,
+      "max": 1.186,
+      "p50": -33.461,
+      "p75": -26.478,
+      "p90": -20.693,
+      "p95": -17.037,
+      "p99": -9.852
+    },
+    "windowsAbovePeakDb": {
+      "minus12": 1528,
+      "minus6": 599
+    },
+    "interpretation": "오디오 창 분포는 세션의 물리적 소리 범위를 보이는 참고 통계다. 위 창 개수는 샷 수가 아니며 타격음 정답으로 사용하지 않는다."
+  },
+  "candidateStudy": {
+    "scope": "full-session-video-only",
+    "peakThresholdDb": -12.0,
+    "minimumCandidateSeparationSeconds": 1.5,
+    "audioCandidateCount": 328,
+    "isShotCount": false,
+    "nextStep": "후보 전후 화면을 다시 확인해 퍼터·웻지·아이언·우드·드라이버 및 비샷으로 라벨링"
+  },
+  "visualCoverageStudy": {
+    "samplingIntervalSeconds": 1.0,
+    "sampledFrameCount": 5287,
+    "scope": "full-session-video-only",
+    "observedSequenceTypes": [
+      "repeated-short-stroke-sequences-consistent-with-putting",
+      "large-backswing-and-follow-through-sequences",
+      "address-and-ball-placement",
+      "player-change-and-waiting",
+      "result-check-and-club-cleanup"
+    ],
+    "puttCoverageStatus": "short-stroke segments are repeatedly visible across the full session; exact putt count and frame boundaries remain uncounted",
+    "isShotCount": false
+  },
+  "shotAudit": {
+    "allShotsIncluded": true,
+    "allShotsIncludedScope": "긴 영상 한 편에만 해당",
+    "exactShotCount": "not-counted",
+    "perShotClubLabels": false,
+    "perShotShotOrNonShotLabels": false,
+    "countingRestriction": "세션 전체의 포함 범위는 확정했지만, 개별 샷 경계를 임의로 세어 수치 정답으로 만들지 않는다."
+  },
+  "lessons": [
+    "긴 영상은 드라이버·우드·아이언·웻지·퍼터가 모두 포함된 완결 세션이므로 퍼팅 자료 없음으로 분류하지 않는다.",
+    "짧은 영상은 전체 세션이 아닌 일부 구간이므로 전 클럽 구성이나 전체 샷 수의 근거로 사용하지 않는다.",
+    "클럽 종류가 달라도 공 앞 준비→동작→결과 확인이라는 세션 흐름은 공통 샷 후보 근거로 사용한다.",
+    "퍼터는 일반 스윙과 다른 짧은 스트로크이므로 일반 스윙 임계값으로 제거하지 않고 무음 퍼팅 안전망 경로를 함께 보존한다.",
+    "사람 교대·대기·공 배치·결과 확인은 전체 녹화에 포함되므로 샷 경계 검토에서 비샷 구간으로 분리해야 한다.",
+    "세션 수준 클럽 포함 정답만으로 임계값이나 클럽별 정확도를 만들지 않고, 개별 샷 라벨이 확보된 뒤에만 수치 조정을 한다."
+  ],
+  "applicationBoundary": {
+    "appliedNow": [
+      "전체 영상에 한해 전 클럽·퍼팅 포함 세션을 익명화된 학습 근거로 등록",
+      "부분 영상은 전체 정답과 분리된 보조 관찰 자료로 등록",
+      "퍼팅 양성 자료 부재라는 기존 문구를 이번 자료 범위에 한해 정정",
+      "완결 세션 기반 회귀 검토 대상으로 지정"
+    ],
+    "deferredUntilPerShotLabels": [
+      "클럽별 오디오·자세 임계값 변경",
+      "퍼팅 양성 재현율 수치 산출",
+      "정확한 샷 수와 샷별 fixture 생성"
+    ]
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "title": "스크린골프 퍼터 재검토 라벨",
+  "date": "2026-09-06",
+  "labelSource": "대표님이 한양 로컬 퍼터 재검토 화면에서 전후 8초 후보를 직접 확인",
+  "candidateAccounting": {
+    "reviewedCandidates": 113,
+    "putter": 7,
+    "putterNot": 27,
+    "nonShot": 79,
+    "unreviewed": 0
+  },
+  "meaning": {
+    "positive": "퍼터 후보 영상 창으로 사용할 수 있는 양성 근거",
+    "negative": "퍼터가 아닌 동작과 비샷을 퍼터 안전망에서 억제할 근거",
+    "notAStrokeCount": true,
+    "notFrameLevelPoseData": true
+  },
+  "confirmedFailure": {
+    "symptom": "퍼터 후보 클립에 치기 전 어드레스·대기와 치고 난 뒤 회수 장면이 많이 포함됨",
+    "cause": "후보 시각을 실제 스트로크 중심으로 보정하지 않은 클립 절단",
+    "impact": "클립 단위 퍼터 여부는 확인했지만 퍼터 타수나 스트로크 시점의 정확도는 계산할 수 없음"
+  },
+  "safeApplication": {
+    "applyNow": "퍼터 안전망의 대표성 있는 positive/negative 협업 근거로 등록",
+    "doNotApplyNow": "이 라벨만으로 GolfPuttStrokeAnalyzer의 임계값을 낮추거나 높이지 않음",
+    "nextRequiredEvidence": "7개 퍼터 양성 클립에서 프레임별 자세 시퀀스와 실제 스트로크 중심을 추출해 putt-stroke fixture로 변환"
+  },
+  "sequencePriorCorrection": {
+    "rule": "드라이버 직전은 퍼터 확정 조건이 아니라 후보 우선순위 신호",
+    "hardExclusion": false,
+    "rankingWindowSeconds": {"minimum": 3, "maximum": 45},
+    "latestLocalReview": {
+      "candidates": 10,
+      "putter": 8,
+      "putterNot": 1,
+      "nonShot": 1,
+      "unreviewed": 0,
+      "note": "남은 후보 1개는 영상 프레임에서 공 뒤 어드레스와 짧은 퍼터 스트로크·팔로스루를 확인해 퍼터로 확정"
+    }
+  }
+}

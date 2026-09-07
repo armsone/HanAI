@@ -1,0 +1,102 @@
+{
+  "schemaVersion": 1,
+  "studyDate": "2026-09-06",
+  "feature": "AiShot",
+  "label": "full-swing-positive",
+  "labelSource": "전체 영상을 사람이 확인한 샷 수 정답",
+  "isPuttPositive": false,
+  "notForPuttEvaluation": true,
+  "usage": [
+    "swing-sequence-positive",
+    "non-putt-negative",
+    "shot-segmentation-review"
+  ],
+  "identity": {
+    "assetHash": "removed",
+    "fileName": "removed",
+    "captureTime": "removed",
+    "sourcePath": "not-recorded",
+    "framesStored": false,
+    "audioStored": false,
+    "jointCoordinatesStored": false
+  },
+  "media": {
+    "durationSeconds": 48,
+    "width": 1080,
+    "height": 1440,
+    "frameRate": 30,
+    "audio": "mono-aac",
+    "environment": "indoor-screen-golf",
+    "camera": "fixed-vertical-view",
+    "puttCount": 0,
+    "visuallyAuditedGolfShotCount": 8,
+    "clubLabelsAvailable": false
+  },
+  "shotAudit": {
+    "countDefinition": "주소→백스윙→다운스윙/임팩트→피니시가 한 번 완결된 동작",
+    "confirmedShotCount": 8,
+    "sequenceGroups": [
+      {
+        "group": "light-top-sequence",
+        "shotCount": 6,
+        "relativeShotCentersSeconds": [1.0, 9.0, 17.5, 21.5, 25.5, 29.5]
+      },
+      {
+        "group": "dark-top-sequence",
+        "shotCount": 2,
+        "relativeShotCentersSeconds": [33.0, 37.0]
+      }
+    ],
+    "nonShotContent": [
+      "설명·관찰·선수 교대",
+      "공과 클럽 위치 확인",
+      "마지막 구간의 정지·정리 동작"
+    ],
+    "auditConfidence": "high"
+  },
+  "visualStudy": {
+    "persistentBackground": [
+      "세로형 고정 카메라 구도",
+      "스크린 골프장 격자·매트",
+      "날짜 오버레이",
+      "HanClip 워터마크",
+      "스크린의 공 궤적·타격 결과 그래픽"
+    ],
+    "positiveSequenceEvidence": [
+      "공 앞 어드레스",
+      "클럽의 백스윙",
+      "다운스윙과 임팩트 통과",
+      "높은 피니시와 체중 이동",
+      "샷 뒤 공 궤적 또는 결과 표시"
+    ],
+    "negativeSequenceEvidence": [
+      "사람이 서서 기다리거나 설명함",
+      "타석에 접근·이탈함",
+      "공과 장비를 확인함",
+      "스윙 없이 마지막에 정지함"
+    ]
+  },
+  "lessons": [
+    "한 프레임의 낮은 어드레스만으로 퍼팅으로 분류하지 않고 전체 시퀀스를 본다.",
+    "큰 백스윙·빠른 다운스윙·피니시가 반복되므로 이번 영상은 퍼팅 양성이 아니라 일반 골프 스윙 양성이다.",
+    "고정 구도에서는 카메라 움직임보다 사람·클럽·공 주변의 시간 순서가 핵심 시각 근거다.",
+    "설명·교대·장비 확인은 사람이 화면에 있어도 샷이 아니므로 비샷 억제 근거로 유지한다.",
+    "클럽 종류는 영상만으로 확정하지 않고, 샷 양성 라벨과 클럽 라벨을 분리한다."
+  ],
+  "whyOtherVideosWereNotAdded": {
+    "confirmedReasonsFromExistingRecords": [
+      "혼합 세션 결과물은 여러 4초 클립을 이어 붙인 출력본이지만 클립별 클럽 라벨이 없었다.",
+      "혼합 세션은 전체 세션의 샷·비샷 정답 개수가 없어서 개별 양성 자료로 확정할 수 없었다.",
+      "원 세션에 퍼팅이 있었어도 결과 출력에 퍼팅이 없었으므로 퍼팅 양성 자료로 추가할 수 없었다.",
+      "현재 저장소와 로컬 Inbox/Work에는 추가 원본이 남아 있지 않아 재분석할 입력이 없다."
+    ],
+    "interpretation": "추가되지 못한 주된 이유는 HanAI의 자동 판정 거부가 아니라, 보존 가능한 원본·클립별 정답·퍼팅 포함 여부가 부족했기 때문이다.",
+    "requiredForNextAddition": [
+      "원본 또는 개별 클립을 로컬에서 다시 확인",
+      "클립별 샷/비샷 라벨",
+      "클립별 클럽 라벨",
+      "퍼팅 양성 여부의 사람 확인",
+      "주소·임팩트·피니시가 포함된 충분한 pre-roll"
+    ]
+  }
+}

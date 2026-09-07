@@ -1,0 +1,31 @@
+{
+  "title": "다음 드라이버 직전 퍼터 순서 기준 반복 튜닝",
+  "date": "2026-09-06",
+  "input": "퍼터 재검토 113개 라벨과 전체 후보의 자동 확정 앵커",
+  "testedWindow": "앵커 직전 3초부터 45~150초 전까지",
+  "results": [
+    {"beforeSeconds": 45, "kept": 76, "putter": 3, "putterNot": 17, "nonShot": 56},
+    {"beforeSeconds": 60, "kept": 83, "putter": 5, "putterNot": 18, "nonShot": 60},
+    {"beforeSeconds": 75, "kept": 90, "putter": 6, "putterNot": 20, "nonShot": 64},
+    {"beforeSeconds": 120, "kept": 104, "putter": 6, "putterNot": 25, "nonShot": 73},
+    {"beforeSeconds": 150, "kept": 112, "putter": 7, "putterNot": 27, "nonShot": 78}
+  ],
+  "conclusion": "현재 자동 확정 후보는 드라이버만을 나타내지 않아 순서 기준의 단독 앵커로 사용할 수 없다. 드라이버 직전 정보는 퍼터 확정 조건이 아니라 후보 우선순위로만 사용한다.",
+  "safeDecision": "앵커가 없는 후보도 버리지 않고 화면·동작 신호로 유지한다. 앵커와 3~45초 사이에 있는 후보에는 sequencePrior와 priorityScore만 부여하며, 퍼터 라벨은 영상 동작 확인 없이는 확정하지 않는다.",
+  "recallFirstPass": {
+    "minimumCandidateFloor": 30,
+    "visualMotionUpperLimit": 7.0,
+    "candidateCount": 91,
+    "previousCandidateCount": 10,
+    "confirmedLabelsPreserved": {"putter": 8, "putterNot": 1, "nonShot": 1},
+    "unreviewedCandidates": 81,
+    "floorSatisfied": true,
+    "interpretation": "후보 회수율 기준을 통과한 것이며 퍼터 샷 수 확정이 아니다."
+  },
+  "validation30": {
+    "firstBatch": {"total": 30, "putter": 7, "putterNot": 2, "nonShot": 21},
+    "confirmedCause": "sequencePrior 가중치가 너무 높고 visualMotionScore가 정지 프레임을 우선해 비샷이 상위에 배치됨",
+    "correction": "sequencePrior 0.65→0.25, motion score 0.35→0.75, 정지 프레임 우선 로직을 중간 움직임 선호로 변경, 기존 최종 라벨을 다음 추출에 재사용",
+    "nextBatch": {"total": 30, "knownPutter": 7, "unreviewed": 23}
+  }
+}

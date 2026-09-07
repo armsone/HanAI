@@ -5,7 +5,7 @@ import Foundation
 /// - `product`: 한양 패키지(기술 모듈 HanAI) 버전. 모델 계보와 독립적으로 올린다.
 /// - `golfModel`: AiShot 골프 기능이 사용하는 판정 모델 계보 버전.
 public enum HanAIVersion {
-    public static let product = "0.2.0"
+    public static let product = "0.3.0"
 
     public static var golfModel: String {
         GolfModelVersion.current.rawValue

@@ -5,7 +5,7 @@
 
 제품의 공식 명칭은 **한양**이다. 기존 앱과 패키지 호환을 위한 기술 식별자만 `HanAI`를 유지한다.
 
-- 제품 버전: `0.2.0`
+- 제품 버전: `0.3.0`
 - 골프 판정 모델 계보(AiShot): `0.7.0` (`GolfModelVersion.current`)
 - 첫 기능: **AiShot** — 골프 스윙 자동 촬영(충격음 + 화면 움직임 + 자세 결합)과 무음 퍼팅 안전망
 
@@ -64,6 +64,7 @@ Swift 테스트는 `#filePath` 기준 상대 경로로 같은 폴더를 읽는�
 | 화면 움직임 | `GolfSwingMotionAnalyzer` | 정지 → 백스윙 → 다운스윙 상태기계, 전역 변화 기록 |
 | 자세 스윙 | `GolfSwingPoseAnalyzer` | 정지 → 손 이동 → 빠른 복귀 → 임팩트 창 |
 | 무음 퍼팅 | `GolfPuttStrokeAnalyzer` | 정지 → 작은 백스윙 → 전진 스트로크 → 팔로스루 확정, 아이언 오탐 방지 |
+| 퍼터 후보 탐지 | `GolfPutterDetector` | 포즈 스트림과 이동창에서 짧은 횡방향 스트로크 후보를 회수하고 실제 중심 시각을 산출하며, 겹친 창은 한 스트로크로 병합 |
 | 융합 | `GolfSwingFusionPolicy`, `GolfPuttFusionPolicy` | 최종 촬영 여부 결정 |
 
 상세 계약과 상수는 [docs/architecture.md](docs/architecture.md), 앱 연결은 [docs/integration.md](docs/integration.md)를 본다.

@@ -1,0 +1,88 @@
+{
+  "schemaVersion": 1,
+  "studyDate": "2026-09-06",
+  "feature": "AiShot",
+  "labelStatus": "user-confirmed-candidate-level",
+  "labelSource": "한양 로컬 협업 분석기에서 대표님이 후보 영상을 직접 확인해 확정한 라벨",
+  "usage": [
+    "audio-candidate-precision-review",
+    "preliminary-putter-positive-evidence",
+    "non-shot-suppression"
+  ],
+  "identity": {
+    "assetHash": "removed",
+    "fileName": "removed",
+    "captureTime": "removed",
+    "sourcePath": "not-recorded",
+    "framesStored": false,
+    "audioStored": false,
+    "jointCoordinatesStored": false
+  },
+  "candidateExtraction": {
+    "sourceVideoCount": 2,
+    "audioPeakThresholdDb": -12.0,
+    "candidateMergeWindowSeconds": 4.0,
+    "candidateCount": 263,
+    "labelCountIsShotCount": false
+  },
+  "sessionExpectation": {
+    "playedHolesLowerBound": 45,
+    "putterCandidateCount": 6,
+    "minimumHoleBasedPuttExpectation": 45,
+    "putterCoverageAssessment": "severe-miss",
+    "maximumRecallAgainstOnePuttPerHoleLowerBound": 0.1333,
+    "minimumMissRateAgainstOnePuttPerHoleLowerBound": 0.8667,
+    "assessmentCaveat": "홀마다 퍼터가 한 번 이상 있었다는 보수적 가정의 상한이며 실제 퍼터 시도 수와 누락률은 더 많을 수 있다."
+  },
+  "confirmedCandidateLabels": {
+    "driver": 42,
+    "iron": 50,
+    "wedge": 14,
+    "wood": 12,
+    "putter": 6,
+    "nonShot": 139,
+    "unknown": 0
+  },
+  "coverage": {
+    "fullSessionSourceCandidateLabels": {
+      "driver": 41,
+      "iron": 47,
+      "wedge": 12,
+      "wood": 12,
+      "putter": 6,
+      "nonShot": 130
+    },
+    "partialSourceCandidateLabels": {
+      "driver": 1,
+      "iron": 3,
+      "wedge": 2,
+      "nonShot": 9
+    },
+    "humanConfirmedClubCoverage": [
+      "driver",
+      "wood",
+      "iron",
+      "wedge",
+      "putter"
+    ]
+  },
+  "lessons": [
+    "오디오 후보 263개 중 139개가 비샷으로 라벨되어 오디오만으로는 촬영 확정이 부족하다.",
+    "전체 세션에서 퍼터 후보 6개만 대표님이 직접 확인했다. 최소 45홀 기준으로도 퍼터를 최소 86.7% 놓친 심각한 실패 사례다.",
+    "일반 스윙 후보는 드라이버·우드·아이언·웻지로 나뉘므로 큰 동작 하나로 클럽을 구분하지 않는다.",
+    "이번 라벨은 오디오 후보 전수 검토 결과이며, 조용한 퍼팅을 후보 생성 단계에서 잃었으므로 영상 전체의 모든 샷을 세어 만든 완전한 샷 정답 집합은 아니다.",
+    "퍼터는 오디오 후보를 기다리지 말고 화면·자세의 짧은 스트로크 후보를 독립적으로 생성해야 한다."
+  ],
+  "applicationBoundary": {
+    "appliedNow": [
+      "비샷 억제와 전 클럽 후보 분포를 학습 요약에 반영",
+      "퍼터 후보 6개를 초기 양성 근거로 등록하되 심각한 누락 사례로 표시"
+    ],
+    "deferredUntilMorePutterClips": [
+      "퍼터 임계값 변경",
+      "퍼팅 재현율·오탐률 확정",
+      "오디오와 독립된 화면·자세 퍼팅 후보 추출",
+      "샷 단위 fixture 생성"
+    ]
+  }
+}
