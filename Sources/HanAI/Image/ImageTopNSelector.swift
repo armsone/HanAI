@@ -82,14 +82,14 @@ public enum ImageTopNSelector {
         )
     }
 
-    /// 상위 점수의 10% 이내인 품질 그룹을 추천한다. 거의 같은 점수이면 모두 유지한다.
+    /// 상위 점수의 10% 이내인 품질 그룹에서 절반을 추천해 결과를 더 엄격하게 추린다.
     /// 추천값은 사용자가 선택한 장수를 덮어쓰는 데 사용하지 않는다.
     public static func recommendedCount(candidates: [ImageQualityCandidate]) -> Int {
         guard !candidates.isEmpty else { return 0 }
         let scores = candidates.map(qualityScore)
         guard let best = scores.max() else { return 0 }
         let tolerance = max(abs(best) * 0.1, 0.01)
-        return max(1, scores.filter { $0 >= best - tolerance }.count)
+        return max(1, scores.filter { $0 >= best - tolerance }.count / 2)
     }
 
     private static func qualityScore(_ candidate: ImageQualityCandidate) -> Double {
