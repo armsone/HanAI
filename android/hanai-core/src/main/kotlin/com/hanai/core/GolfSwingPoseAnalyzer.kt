@@ -188,12 +188,16 @@ class GolfSwingPoseAnalyzer {
     }
 
     fun currentSignal(time: Double): GolfSwingPoseSignal = when (phase) {
-        GolfSwingPosePhase.IMPACT_WINDOW -> GolfSwingPoseSignal(
-            GolfSwingPosePhase.IMPACT_WINDOW,
-            min(latestConfidence, min(1.0, 0.72 + peakProgress * 0.45)),
-            impactWindowStart,
-            impactWindowEnd
-        )
+        GolfSwingPosePhase.IMPACT_WINDOW -> {
+            val start = impactWindowStart
+            val end = impactWindowEnd
+            if (start == null || end == null || time < start || time > end) {
+                GolfSwingPoseSignal(GolfSwingPosePhase.SEEKING_ADDRESS, 0.0, null, null)
+            } else {
+                GolfSwingPoseSignal(GolfSwingPosePhase.IMPACT_WINDOW,
+                    min(latestConfidence, min(1.0, 0.72 + peakProgress * 0.45)), start, end)
+            }
+        }
         GolfSwingPosePhase.BACKSWING -> GolfSwingPoseSignal(
             GolfSwingPosePhase.BACKSWING,
             min(0.7, 0.35 + peakProgress),

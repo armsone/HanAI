@@ -7,7 +7,7 @@ package com.hanai.core
  * - [golfModel]: AiShot 골프 기능이 사용하는 판정 모델 계보 버전.
  */
 object HanAIVersion {
-    const val product: String = "0.2.0"
+    const val product: String = "0.3.1"
 
     val golfModel: String
         get() = GolfModelVersion.current.rawValue

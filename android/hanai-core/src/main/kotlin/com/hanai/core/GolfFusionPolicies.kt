@@ -29,13 +29,17 @@ object GolfSwingFusionPolicy {
         requiresPoseConfirmation: Boolean = false,
         hasRecentVisualFrame: Boolean,
         isInsideReadyPromptWindow: Boolean,
-        modelVersion: GolfModelVersion = GolfModelVersion.current
+        modelVersion: GolfModelVersion = GolfModelVersion.current,
+        hasRecentTrackedBody: Boolean? = null
     ): Boolean {
         if (!hasRecentVisualFrame) {
             return decision.isTriggered &&
                 !modelVersion.requiresVisualShotEvidence &&
                 !isInsideReadyPromptWindow
         }
+
+        // null preserves the existing adapter contract; false is an explicit veto.
+        if (modelVersion.requiresVisualShotEvidence && hasRecentTrackedBody == false) return false
 
         val motionImpactTime = motion.impactTime
         val hasAlignedMotion = motion.isImpactWindow &&

@@ -28,12 +28,19 @@ public enum GolfSwingFusionPolicy {
         requiresPoseConfirmation: Bool = false,
         hasRecentVisualFrame: Bool,
         isInsideReadyPromptWindow: Bool,
-        modelVersion: GolfModelVersion = .current
+        modelVersion: GolfModelVersion = .current,
+        hasRecentTrackedBody: Bool? = nil
     ) -> Bool {
         guard hasRecentVisualFrame else {
             return decision.isTriggered
                 && !modelVersion.requiresVisualShotEvidence
                 && !isInsideReadyPromptWindow
+        }
+
+        // nil preserves the existing adapter contract. New adapters supply an
+        // explicit observation: no tracked golfer must not become a motion shot.
+        if modelVersion.requiresVisualShotEvidence, hasRecentTrackedBody == false {
+            return false
         }
 
         let hasAlignedMotion: Bool = {

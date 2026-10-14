@@ -92,7 +92,7 @@ class GolfSwingMotionAnalyzer {
             lastGlobalChangeTime = sample.time
             globalMotionCount += 1
             if (globalMotionCount >= 2) reset()
-            return currentSignal(sample.time)
+            return GolfSwingMotionSignal(GolfSwingMotionPhase.SEEKING_ADDRESS, 0.0, null)
         }
         globalMotionCount = 0
 
@@ -184,7 +184,8 @@ class GolfSwingMotionAnalyzer {
     fun currentSignal(time: Double): GolfSwingMotionSignal = when (phase) {
         GolfSwingMotionPhase.DOWNSWING -> {
             val impactTime = downswingTime
-            if (impactTime == null || time - impactTime > 0.42) {
+            if (impactTime == null || time < impactTime || time - impactTime > 0.42 ||
+                lastGlobalChangeTime >= impactTime) {
                 GolfSwingMotionSignal(GolfSwingMotionPhase.SEEKING_ADDRESS, 0.0, null)
             } else {
                 GolfSwingMotionSignal(

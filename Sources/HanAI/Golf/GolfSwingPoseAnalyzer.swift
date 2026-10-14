@@ -217,6 +217,11 @@ public struct GolfSwingPoseAnalyzer: Sendable {
     public func currentSignal(at time: Double) -> GolfSwingPoseSignal {
         switch phase {
         case .impactWindow:
+            guard let impactWindowStart, let impactWindowEnd,
+                  time >= impactWindowStart, time <= impactWindowEnd else {
+                return GolfSwingPoseSignal(phase: .seekingAddress, confidence: 0,
+                                           impactWindowStart: nil, impactWindowEnd: nil)
+            }
             return GolfSwingPoseSignal(
                 phase: .impactWindow,
                 confidence: min(

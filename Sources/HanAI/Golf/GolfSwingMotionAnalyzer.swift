@@ -109,7 +109,7 @@ public struct GolfSwingMotionAnalyzer: Sendable {
             if globalMotionCount >= 2 {
                 reset()
             }
-            return currentSignal(at: sample.time)
+            return GolfSwingMotionSignal(phase: .seekingAddress, confidence: 0, impactTime: nil)
         }
         globalMotionCount = 0
 
@@ -204,7 +204,9 @@ public struct GolfSwingMotionAnalyzer: Sendable {
     public func currentSignal(at time: Double) -> GolfSwingMotionSignal {
         switch phase {
         case .downswing:
-            guard let downswingTime, time - downswingTime <= 0.42 else {
+            guard let downswingTime, time >= downswingTime,
+                  time - downswingTime <= 0.42,
+                  lastGlobalChangeTime < downswingTime else {
                 return GolfSwingMotionSignal(
                     phase: .seekingAddress,
                     confidence: 0,
