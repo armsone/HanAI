@@ -48,7 +48,7 @@ Swift는 `struct`/`enum`, Kotlin은 `data class`/`enum class`/`class`다.
 
 | 타입 | 멤버 | 의미 |
 | --- | --- | --- |
-| `HanAIVersion` | `product = "0.3.0"`, `golfModel` | 제품 버전, 현재 골프 모델 문자열 |
+| `HanAIVersion` | `product = "0.4.0"`, `golfModel` | 제품 버전, 현재 골프 모델 문자열 |
 | `GolfModelVersion` | `v0_1_0 … v0_7_0`, `current = v0_7_0` | 모델 계보와 롤백 지점 |
 | | `title`, `releaseDate`, `featureSummary` | UI 표시용 문자열(한국어) |
 | | `supportsRealtimeVisualAssist` | 0.2.0+ |
@@ -140,6 +140,58 @@ Swift는 `struct`/`enum`, Kotlin은 `data class`/`enum class`/`class`다.
 - 유사한 묶음에서는 `sharpness + log(pixelCount) / 100` 점수가 높은 사진을 남긴다.
 - 두 사진 사이 거리 자료가 없거나 임계값보다 크면 서로 다른 사진으로 보존한다.
 - Vision, ML Kit, 원본 사진 디코딩과 전송 상한 처리는 앱 adapter 책임이다.
+
+### 3.8 다양성을 반영한 사진 선택 (0.4.0)
+
+기존 `ImageSimilaritySelector`와 `ImageTopNSelector` 계약은 그대로 유지한다. 추가 API는
+`ImageDiversitySelector.selectDiverse(candidates:distances:threshold:n:)`이며 Swift/Kotlin에서 의미가 같다.
+
+- `ImageQualityCandidate`의 선명도·노출·선택적 미학 점수는 유한한 `0...1`, 픽셀 수는 양수다.
+  Apple 원시 미학 점수 `-1...1`은 adapter에서 `(score + 1) / 2`로 변환한다.
+- 중복 ID의 모든 입력과 비정상 수치는 제외하고 이유를 반환한다. 거리가 없으면 같은 묶음으로 합치지 않는다.
+- 높은 품질·낮은 index 순으로 묶음을 만들되, 새 항목과 묶음의 **모든** 구성원의 거리가 임계값 이내여야 한다.
+  같은 쌍의 유효 거리 입력이 충돌하면 큰 거리를 사용한다.
+- 묶음별 대표를 먼저 선택하고 추가 구성원을 순서대로 채운다. 결과 장수는 `min(n, 유효 입력 수)`이며 최종 index는 입력 순서로 정렬한다.
+- 일부 후보에 미학 점수가 없으면 전체 후보에서 미학 혼합을 사용하지 않는다. 제공된 잘못된 점수는 결측으로 숨기지 않는다.
+- 기본 품질은 기존 정책과 같은 `sharpness × 0.4 + exposure × 0.2 + log(pixelCount) / 100`이다.
+  전부 미학 점수가 있으면 `base × 0.4 + aesthetics × 0.6`을 쓴다. 가중치는 한양의 실제 선호도에 맞춰 검증된 값이라는 의미가 아니다.
+- 임계값에 보편적인 기본값은 없다. 모델·리비전·전처리·거리 종류가 일치하는 adapter가 보정값을 전달한다.
+  유효하지 않은 임계값이면 안전하게 단독 묶음으로 보존한다.
+
+결과는 선택 index 외에 품질 순위, 선택 순서, 그룹 구성원, 대표/추가 구성원 역할과 제외 이유를 포함한다.
+이 API는 같은 인물이나 주제라는 이유만으로 사진을 근접 중복으로 취급하지 않으며 원본을 삭제하지 않는다.
+
+### 3.9 영상 프레임·구간 재선택 (0.4.0)
+
+`VideoHighlightSelector.select(candidates:distances:durationSeconds:configuration:shotBoundarySeconds:)`는
+기존 중요 장면 추출·랭킹 결과 또는 adapter의 프레임 후보를 받아 선택을 보완한다. 원본 영상이나 OS API는 받지 않는다.
+`VideoFrameCandidate`는 index, 초 단위 시각, `0...1` 품질, 선택적 `0...1` 중요도를 갖는다.
+
+| 설정 | 기본값 | 의미 |
+| --- | --- | --- |
+| `frameCount` | 필수 | 최대 프레임 수. 품질·간격 제약 때문에 적게 선택될 수 있음 |
+| `similarityThreshold` | 필수 | adapter와 일치하는 보정 거리 |
+| `minimumQuality` | 0.25 | 다양성 선택보다 먼저 적용하는 품질 하한 |
+| `minimumSpacingSeconds` | 1 | 선택 프레임 사이 최소 시간 간격 |
+| `localDiversityWindowSeconds` | 30 | 이 범위의 가까운 중복만 억제. 먼 시간의 재등장은 보존 가능 |
+| `preRollSeconds` / `postRollSeconds` | 1 / 2 | 중심 프레임 앞뒤 여유 |
+| `maxSegmentDurationSeconds` | 6 | 한 구간의 최대 길이 |
+| `totalDurationBudgetSeconds` | 30 | 반환 구간 전체의 최대 길이 |
+
+잘못된 설정과 비정상 후보를 구분해 반환한다. 모든 유효 후보가 중요도를 제공할 때만 중요도를 함께 사용하며,
+실제 적용 여부는 `usedImportanceScores`다. 일부 결측 때문에 품질만 쓴 결과를 중요도 랭킹으로 표시하면 안 된다.
+선택 프레임과 반환 구간은 별도다. 예산 때문에 구간이 빠진 중심 프레임은 `omittedSegmentFrameIndices`에 남는다.
+구간은 영상 범위·선택적 컷 경계 안에서 겹침을 줄여 반환하지만, 의미 있는 사건의 시작·끝을 이해했다고 보장하지 않는다.
+
+### 3.10 OS·기기와 특징 추출기 경계
+
+한양의 기본 판정은 플랫폼 중립 수치 계약을 기준으로 한다. Swift와 Kotlin 구현은 같은 상태·상수·출력 의미를 유지한다.
+특정 기기의 Vision 기능, Python, ffmpeg 또는 공개 모델 런타임을 공통 코어의 필수 의존성으로 만들지 않는다.
+
+로컬 미디어 도구는 Python+ffmpeg/ffprobe로 특징을 만들고 별도 JVM 실행기로 동일 Kotlin 코어를 호출한다.
+선택형 DINOv2/SigLIP2 adapter는 고정된 공개 모델을 로컬에서 사용한다. 원시 특징 벡터는 출력하지 않고,
+거리·품질·관련도·선택 결과만 익명 index로 반환한다. 모델 관련도는 개인 기억의 중요도나 확률이 아니다.
+기기별 디코더·모델 런타임 연결과 실제 기기 확인은 별도이며, 런타임의 OS 지원을 전체 기기 검증 완료로 표시하지 않는다.
 
 ## 4. 이관 시 통일한 플랫폼 차이 (Codex 검증 포인트)
 

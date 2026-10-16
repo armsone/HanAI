@@ -1,0 +1,18 @@
+# Optional heavy dependencies for learned feature adapters in HanAI media selector.
+# Python >= 3.11 recommended (required for onnxruntime pinned version).
+#
+# Notes:
+# - macOS arm64 torch wheels typically require macOS 14+.
+# - On Linux, default PyPI wheels for torch may include CUDA dependencies.
+#   For CPU-only environments, install using official CPU wheel index:
+#   pip install torch==2.14.1 --index-url https://download.pytorch.org/whl/cpu
+# - onnx and onnxruntime are optional, required only for the `export-onnx` command
+#   or runtime portability evaluation.
+
+torch==2.14.1
+transformers==5.20.1
+huggingface_hub==2.2.0
+Pillow==12.3.0
+safetensors==0.8.0
+onnx==1.23.2
+onnxruntime==1.31.0

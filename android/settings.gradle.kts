@@ -14,3 +14,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "hanai-android"
 include(":hanai-core")
+include(":hanai-media-cli")
+include(":hanai-onnx")

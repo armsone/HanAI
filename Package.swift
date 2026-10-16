@@ -7,12 +7,17 @@ import PackageDescription
 let package = Package(
     name: "HanAI",
     products: [
-        .library(name: "HanAI", targets: ["HanAI"])
+        .library(name: "HanAI", targets: ["HanAI"]),
+        .library(name: "HanAIApple", targets: ["HanAIApple"])
     ],
     targets: [
         .target(
             name: "HanAI",
             path: "Sources/HanAI"
+        ),
+        .target(
+            name: "HanAIApple",
+            path: "Sources/HanAIApple"
         ),
         .testTarget(
             name: "HanAITests",
