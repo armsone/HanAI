@@ -1,4 +1,6 @@
-# hanai-media-selector / analyze_media.py
+# hanai-media-selector / analyze_media.py — HanAI MediaTools 0.4.1
+
+This portable tool is released as HanAI MediaTools 0.4.1. The native Swift/JVM SDK version stays 0.4.0 (unchanged).
 
 Portable, **local-only** numeric feature extraction for photos and video
 frames, implemented with the Python 3 standard library plus the `ffmpeg`
@@ -85,6 +87,59 @@ python3 analyze_media.py images \
   not supported — the caller must pass explicit file paths.
 - Output is a single JSON object on stdout; there is no file output
   option by design.
+
+#### Reference-image candidate search (images only, review-only)
+
+```bash
+python3 analyze_media.py images --image a.jpg --image b.jpg \
+  --reference-image ref.jpg [--reference-limit 20]
+```
+
+Adds `reference` (`namespace`, `reviewOnly: true`, `scope`,
+`availableCandidateCount`, `requestedLimit`) and `referenceMatches`
+(`[{index, distance}]`, ascending distance then index). The reference is not
+a candidate and does not change `candidates`, `distances`, engine input, or
+`--count` selection. `--reference-limit` (default 20, 1..200) only limits
+matches and requires `--reference-image`. It uses the same decode and
+embedding backend/namespace as candidates. Matches are review-only similarity
+hints, not a duplicate probability and never for automatic deletion.
+`--query` with a reference is rejected. Invalid/undecodable reference fails
+with a fixed error (`reference_invalid`, `reference_decode_failed`,
+`reference_embed_failed`) before candidate processing; no fallback. The
+default `basic` backend is an approximate perceptual descriptor, not a
+semantic claim; semantic-style similarity needs a local DINOv2 model, e.g.
+`--embedding-backend dinov2 --model-dir /path/to/local/dinov2-small`
+(reference `distance` is the backend's basic descriptor distance, which is not cosine, or the learned-embedding cosine distance, depending on the backend).
+
+##### Optional pixel agreement (`--verify-reference-copies`)
+
+```bash
+python3 analyze_media.py images --image a.jpg --image b.jpg \
+  --embedding-backend dinov2 --model-dir /path/to/local/dinov2-small \
+  --reference-image ref.jpg --verify-reference-copies [--reference-limit 20]
+```
+
+Requires `--reference-image` and `--embedding-backend dinov2`
+(`verify_requires_reference` / `verify_requires_dinov2` otherwise, including
+for `basic` and `siglip2`). Only the returned `referenceMatches` (at most
+`--reference-limit`, max 200) get `pixelAgreement`: `{status, metrics}` where
+`status` is `computed`, `aspect_mismatch` (aspect relative difference > 0.02,
+no metrics) or `unknown` (that candidate's pixels could not be read; never a
+pass). `metrics` are `ssimGlobal` (grayscale), `tileSsimMin` (4x4 tiles) and
+`rgbMad` and `maxAbsoluteResidual` (max per-channel |a-b|/255 over the same
+256 resized RGB, not a mean), computed directly (no mirror alignment) at long edge 256 with the
+reference loaded once and candidates loaded sequentially. `reference.pixelAgreement`
+states the fixed config. These are numeric pixel measurements only: no
+`copyEvidence` or pass/fail is emitted because controlled text/patch stress
+copies reached high agreement, so they are not a same-person, semantic or
+duplicate verdict. Ordering, `candidates`, `distances`, engine input, `--count`
+selection and the automatic gate are unchanged and `reviewOnly` is always
+`true`. Color is not ICC-calibrated (EXIF transpose + plain RGB convert).
+Dependencies: Pillow and numpy, imported lazily from the sibling
+`reference_pixel_agreement.py`; nothing is installed. Images over 16384 px on
+a side or 16M pixels are refused. Failures use fixed codes: an unreadable
+reference fails the run with `reference_pixel_failed`; Pillow/numpy missing
+fails with the same code for the reference.
 
 #### Shared optional flags (images and video)
 

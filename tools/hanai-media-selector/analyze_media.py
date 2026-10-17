@@ -3,10 +3,11 @@
 
 Emits JSON on stdout describing simple, unvalidated numeric proxies
 (sharpness/exposure/perceptual distance) for images or video frames.
-Does not perform selection, ranking, or scene/semantic analysis -
-that is the responsibility of the Swift/Kotlin cores that consume this
-output, or of the optional external JVM selection engine bridged via
---engine-home.
+Selection is owned by the Swift/Kotlin cores that consume this output, or
+by the optional external JVM selection engine bridged via --engine-home.
+This file performs no selection and no scene/semantic analysis; its only
+ranking is the review-only reference-image similarity ordering
+(--reference-image), which never affects selection.
 
 Optional embedding backends (--embedding-backend dinov2|siglip2) load a
 local, user-installed model through the sibling learned_features module
@@ -621,6 +622,79 @@ def invoke_engine(args, stdin_text):
     return run_engine(java_bin, lib_dir, stdin_text, timeout)
 
 
+def compute_reference_item(args, ffmpeg, ffprobe, learned):
+    """Decodes/embeds the reference image with the same pipeline as
+    candidates. Returns a descriptor tuple (basic) or vector (learned).
+    Only fixed error codes escape."""
+    try:
+        validate_local_media_path(args.reference_image)
+    except SanitizedError:
+        raise SanitizedError("reference_invalid")
+    try:
+        width, height, rotation = probe_image(ffprobe, args.reference_image)
+        if learned is not None:
+            learned_w, learned_h = content_dims(width, height, rotation, LEARNED_CANVAS)
+            rgb = decode_exact(ffmpeg, args.reference_image, rotation, learned_w, learned_h)
+            try:
+                vector, _ = encode_with_learned(learned, rgb, learned_w, learned_h)
+            except SanitizedError:
+                raise SanitizedError("reference_embed_failed")
+            return vector
+        raw = decode_canvas(ffmpeg, args.reference_image, rotation)
+        _, _, tiles, hist = compute_descriptor(raw, content_box(width, height, rotation))
+        return (tiles, hist)
+    except SanitizedError as exc:
+        if str(exc) == "reference_embed_failed":
+            raise
+        raise SanitizedError("reference_decode_failed")
+
+
+def load_pixel_helper():
+    module_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "reference_pixel_agreement.py")
+    spec = importlib.util.spec_from_file_location("hanai_reference_pixel_agreement", module_path)
+    if spec is None or spec.loader is None or not os.path.isfile(module_path):
+        raise SanitizedError("reference_pixel_failed")
+    module = importlib.util.module_from_spec(spec)
+    try:
+        spec.loader.exec_module(module)
+    except Exception:
+        raise SanitizedError("reference_pixel_failed")
+    return module
+
+
+def annotate_pixel_agreement(helper, ref_image, matches, paths):
+    """Adds pixelAgreement to returned matches only. Candidate pixel
+    failures are status unknown (never a false pass)."""
+    for m in matches:
+        try:
+            cand = helper.load_rgb(paths[m["index"]])
+            res = helper.compare(ref_image, cand)
+            del cand
+            m["pixelAgreement"] = res
+        except Exception:
+            m["pixelAgreement"] = {"status": "unknown", "metrics": None}
+
+
+def build_reference_matches(reference_item, items, distance_fn, limit, namespace):
+    matches = []
+    for index, item in enumerate(items):
+        if item is None:
+            continue
+        d = distance_fn(reference_item, item)
+        if d is None or not math.isfinite(d):
+            continue
+        matches.append({"index": index, "distance": d})
+    matches.sort(key=lambda m: (m["distance"], m["index"]))
+    meta = {
+        "namespace": namespace,
+        "reviewOnly": True,
+        "scope": "review-only similarity candidates; not a duplicate probability and never for automatic deletion",
+        "availableCandidateCount": len(matches),
+        "requestedLimit": limit,
+    }
+    return matches[:limit], meta
+
+
 def analyze_images(args):
     paths = args.image
     if not paths:
@@ -634,6 +708,16 @@ def analyze_images(args):
         namespace = DESCRIPTOR_NAMESPACE
         if args.embedding_backend in LEARNED_BACKENDS:
             learned, namespace = init_learned(args)
+        reference_item = None
+        if args.reference_image is not None:
+            reference_item = compute_reference_item(args, ffmpeg, ffprobe, learned)
+        pixel_helper = ref_pixels = None
+        if getattr(args, "verify_reference_copies", False):
+            pixel_helper = load_pixel_helper()
+            try:
+                ref_pixels = pixel_helper.load_rgb(args.reference_image)
+            except Exception:
+                raise SanitizedError("reference_pixel_failed")
     except SanitizedError as exc:
         return error_result(str(exc))
 
@@ -694,6 +778,23 @@ def analyze_images(args):
         "candidates": candidates,
         "distances": distances,
     }
+
+    if args.reference_image is not None:
+        matches, meta = build_reference_matches(
+            reference_item,
+            vectors if learned is not None else descriptors,
+            embedding_distance if learned is not None else descriptor_distance,
+            args.reference_limit,
+            namespace,
+        )
+        if ref_pixels is not None:
+            annotate_pixel_agreement(pixel_helper, ref_pixels, matches, paths)
+            meta["pixelAgreement"] = {
+                "config": pixel_helper.CONFIG,
+                "scope": "pixel agreement evidence only; not same person, semantic similarity or a duplicate verdict; no ICC color calibration",
+            }
+        result["referenceMatches"] = matches
+        result["reference"] = meta
 
     if status != "error" and args.engine_home:
         try:
@@ -985,6 +1086,9 @@ def build_parser():
 
     images_p = sub.add_parser("images", help="Analyze a set of still images")
     images_p.add_argument("--image", action="append", default=[], help="Path to an image (repeatable, max %d)" % MAX_IMAGES)
+    images_p.add_argument("--reference-image", default=None)
+    images_p.add_argument("--reference-limit", type=int, default=None)
+    images_p.add_argument("--verify-reference-copies", action="store_true")
     images_p.add_argument("--ffmpeg", default=None)
     images_p.add_argument("--ffprobe", default=None)
     add_shared_args(images_p)
@@ -1038,6 +1142,28 @@ def main(argv):
         if finite_positive(args.budget) is None:
             print(json.dumps(error_result("invalid_budget")))
             return 1
+
+    if args.command == "images":
+        if args.verify_reference_copies:
+            if args.reference_image is None:
+                print(json.dumps(error_result("verify_requires_reference")))
+                return 1
+            if args.embedding_backend != "dinov2":
+                print(json.dumps(error_result("verify_requires_dinov2")))
+                return 1
+        if args.reference_image is None:
+            if args.reference_limit is not None:
+                print(json.dumps(error_result("reference_limit_requires_reference")))
+                return 1
+        else:
+            if args.query:
+                print(json.dumps(error_result("reference_query_not_supported")))
+                return 1
+            if args.reference_limit is None:
+                args.reference_limit = 20
+            if not (1 <= args.reference_limit <= MAX_IMAGES):
+                print(json.dumps(error_result("invalid_reference_limit")))
+                return 1
 
     shared_error = validate_shared_args(args)
     if shared_error:

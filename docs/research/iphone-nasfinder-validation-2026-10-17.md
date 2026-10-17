@@ -2,6 +2,12 @@
 
 Current Mac project source was used, without reverting to an earlier release. The hosted app reported NasFinder 2.12.0 build 202610170824 on iOS 27.0.1. The one selected device XCTest passed, with no skipped tests. This exercises production analysis functions inside the app; it is not a complete UI, Photos permission, or export replay.
 
+## Correction after full-resolution re-review — 2026-10-17 11:57 KST
+
+The earlier statement that the model missed two near-duplicate pairs is withdrawn. The frozen truth file contradicted its own stated criterion: pair 31–34 shows a foreground person versus an empty bay; pair 0–24 shows different visible clothing/appearance despite a similar address pose. The original labels, recorded outputs, and historical table below are retained for audit. Neither pair should be forced into automatic duplicate grouping merely to improve the old score.
+
+A separately versioned visual re-annotation changes only those two labels. Recounting the already recorded iPhone outputs gives 5 accepted true near-duplicate pairs, 0 wrongly accepted pairs, 33 correctly rejected different pairs, and 0 missed labeled near-duplicates. This is a **ground-truth correction, not a model recall improvement or an independent holdout**. The older 7-positive/31-negative denominator and AP/AUC values below remain historical and must not be presented as current validated accuracy. Related composition retrieval is a separate task and its candidates must not be counted as duplicate true positives.
+
 ## Photos
 
 48 existing video-derived JPEGs were processed by the actual bundled CPU-only Core ML model and production NasFinder gate. All 48 produced finite 384-dimensional embeddings. The same previously frozen 38 labeled pairs, including 7 similar and 31 different pairs, were used without retuning the threshold.
